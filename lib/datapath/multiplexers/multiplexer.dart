@@ -1,0 +1,3 @@
+class Multiplexer {
+  Multiplexer();
+}
