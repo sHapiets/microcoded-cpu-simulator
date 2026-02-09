@@ -1,1 +1,0 @@
-enum ALUOperation { add, sub }

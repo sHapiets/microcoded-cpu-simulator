@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:microcoded_cpu_coe197/controller/microcode_controller.dart';
-import 'package:microcoded_cpu_coe197/controller/temp_controller.dart';
-import 'package:microcoded_cpu_coe197/datapath/alu/operands/a.dart';
-import 'package:microcoded_cpu_coe197/datapath/alu/operands/b.dart';
-import 'package:microcoded_cpu_coe197/datapath/multiplexers/reg_sel_multiplexer.dart';
-import 'package:microcoded_cpu_coe197/datapath/registers/register_file.dart';
-import 'package:microcoded_cpu_coe197/foundation/data.dart';
-import 'package:microcoded_cpu_coe197/foundation/instruction.dart';
-import 'package:microcoded_cpu_coe197/foundation/word.dart';
+import 'package:microcoded_cpu_coe197/core/controller/microcode_controller.dart';
+import 'package:microcoded_cpu_coe197/core/controller/temp_controller.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/b.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/memory/memory.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/reg_sel_multiplexer.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/registers/register_file.dart';
+import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
+import 'package:microcoded_cpu_coe197/core/foundation/instruction.dart';
+import 'package:microcoded_cpu_coe197/layout/instruction_display.dart';
+import 'package:microcoded_cpu_coe197/layout/memory_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'uCoded CPU Simulator',
+      title: 'Microcoded CPU Simulator',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
       home: const TestDisplay(title: ''),
     );
@@ -44,7 +46,8 @@ class _TestDisplayState extends State<TestDisplay> {
 
   @override
   void initState() {
-    microcodeController.initializePresetROM();
+    Memory.singleton.presetInstructionLoad();
+    microcodeController.initializePreset();
     super.initState();
   }
 
@@ -61,6 +64,15 @@ class _TestDisplayState extends State<TestDisplay> {
       body: Stack(
         children: [
           Align(
+            alignment: AlignmentGeometry.bottomLeft,
+            child: InstructionDisplay(),
+          ),
+          Align(
+            alignment: AlignmentGeometry.centerRight,
+            child: MemoryWidget(),
+          ),
+
+          Align(
             alignment: AlignmentGeometry.topCenter,
             child: TextField(
               textAlign: TextAlign.center,
@@ -73,9 +85,9 @@ class _TestDisplayState extends State<TestDisplay> {
                 );
                 debugPrint(
                   "${decodedInstruction.instructionType.name}\n"
-                  "rd: ${decodedInstruction.instrRegSelMapping![RegSel.rd]}\n"
-                  "rs1: ${decodedInstruction.instrRegSelMapping![RegSel.rs1]}\n"
-                  "rs2: ${decodedInstruction.instrRegSelMapping![RegSel.rs2]}\n",
+                  "rd: ${decodedInstruction.instrRegSelMapping[RegSel.rd]}\n"
+                  "rs1: ${decodedInstruction.instrRegSelMapping[RegSel.rs1]}\n"
+                  "rs2: ${decodedInstruction.instrRegSelMapping[RegSel.rs2]}\n",
                 );
               },
             ),
@@ -84,7 +96,9 @@ class _TestDisplayState extends State<TestDisplay> {
             alignment: AlignmentGeometry.topCenter,
             child: Transform.translate(
               offset: Offset(0, 50),
-              child: Text("heloo"),
+              child: Text(
+                "${MicrocodeController.singleton.microcodePC.intData}",
+              ),
             ),
           ),
 
@@ -104,26 +118,23 @@ class _TestDisplayState extends State<TestDisplay> {
               }).toList(),
             ),
           ),
-
-          Center(
-            child: Column(
-              mainAxisAlignment: .center,
+          Align(
+            alignment: AlignmentGeometry.center,
+            child: Table(
+              defaultColumnWidth: FixedColumnWidth(100),
+              border: TableBorder.all(),
               children: [
-                Text(
-                  'A: ${a.data.intData}',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                Text(
-                  'B: ${b.data.intData}',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                Text(
-                  'RegSel: ${regSelMultiplexer.regSel}',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                Text(
-                  'Reg[rd]: ${registerFile.registers[regSelMultiplexer.addressMapping[RegSel.rd]]!.intData}',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                TableRow(
+                  children: [
+                    Center(child: Text('A: ${a.data.intData}')),
+                    Center(child: Text('B: ${b.data.intData}')),
+                    Center(child: Text('RegSel: ${regSelMultiplexer.regSel}')),
+                    Center(
+                      child: Text(
+                        'Reg[rd]: ${registerFile.registers[regSelMultiplexer.addressMapping[RegSel.rd]]!.intData}',
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
