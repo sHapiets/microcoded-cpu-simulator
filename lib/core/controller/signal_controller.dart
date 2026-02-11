@@ -53,7 +53,7 @@ class SignalController extends Controller {
         case MicrocodeSignal.ldMA:
           memory.setAddressLoadEnable(data.asBit().asBool());
         case MicrocodeSignal.memWr:
-          memory.setMemWriteEnable(data.asBit().asBool());
+          memory.setMemWriteType(MemoryWriteType.fromData(data));
         case MicrocodeSignal.memBuffer:
           bus.setBuffer(Buffer.memEn, data.asBit().asBool());
         case MicrocodeSignal.immSel:

@@ -25,11 +25,9 @@ class _InstructionDisplayState extends State<InstructionDisplay> {
       child: Column(
         children: [
           Text(
-            "OpCode: ${instructionController.instruction.instructionType.opCodeType.name}",
+            "Type: ${instructionController.instruction.instructionType.name}",
           ),
-          Text(
-            "Instruction: ${instructionController.instruction.instructionType.name}",
-          ),
+          Text("Instruction: ${instructionController.instruction.dispatchKey}"),
           Text(
             "rd: ${instructionController.instruction.instrRegSelMapping[RegSel.rd]!.name}",
           ),

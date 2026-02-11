@@ -3,6 +3,7 @@ import 'package:microcoded_cpu_coe197/core/controller/microcode_controller.dart'
 import 'package:microcoded_cpu_coe197/core/controller/temp_controller.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/b.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/memory/memory.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/reg_sel_multiplexer.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/registers/register_file.dart';
@@ -43,6 +44,7 @@ class _TestDisplayState extends State<TestDisplay> {
   final registerFile = RegisterFile.singleton;
   final regSelMultiplexer = RegSelMultiplexer.singleton;
   final microcodeController = MicrocodeController.singleton;
+  final bus = Bus.singleton;
 
   @override
   void initState() {
@@ -73,6 +75,23 @@ class _TestDisplayState extends State<TestDisplay> {
           ),
 
           Align(
+            alignment: AlignmentGeometry.center,
+            child: Transform.translate(
+              offset: Offset(0, 50),
+              child: Table(
+                defaultColumnWidth: FixedColumnWidth(100),
+                children: [
+                  TableRow(
+                    children: bus.buffers.entries.map((buffer) {
+                      return Text("${buffer.key.name}: ${buffer.value}");
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          Align(
             alignment: AlignmentGeometry.topCenter,
             child: TextField(
               textAlign: TextAlign.center,
@@ -82,6 +101,7 @@ class _TestDisplayState extends State<TestDisplay> {
               onSubmitted: (value) {
                 final decodedInstruction = Instruction(
                   instrWord: Data.fromBitString(value).asWord(),
+                  instructionType: InstructionType.typeRISCV,
                 );
                 debugPrint(
                   "${decodedInstruction.instructionType.name}\n"
@@ -97,7 +117,7 @@ class _TestDisplayState extends State<TestDisplay> {
             child: Transform.translate(
               offset: Offset(0, 50),
               child: Text(
-                "${MicrocodeController.singleton.microcodePC.intData}",
+                "Next MircocodePC: ${MicrocodeController.singleton.microcodePC.intData}",
               ),
             ),
           ),
@@ -128,12 +148,6 @@ class _TestDisplayState extends State<TestDisplay> {
                   children: [
                     Center(child: Text('A: ${a.data.intData}')),
                     Center(child: Text('B: ${b.data.intData}')),
-                    Center(child: Text('RegSel: ${regSelMultiplexer.regSel}')),
-                    Center(
-                      child: Text(
-                        'Reg[rd]: ${registerFile.registers[regSelMultiplexer.addressMapping[RegSel.rd]]!.intData}',
-                      ),
-                    ),
                   ],
                 ),
               ],

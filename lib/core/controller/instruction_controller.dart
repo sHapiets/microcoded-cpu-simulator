@@ -3,7 +3,6 @@ import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/immediate_multi
 import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/reg_sel_multiplexer.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/registers/instruction_register.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/instruction.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 
 class InstructionController extends Controller {
   InstructionController._();
@@ -13,11 +12,14 @@ class InstructionController extends Controller {
   final regSelMultiplexer = RegSelMultiplexer.singleton;
   final immediateMultiplexer = ImmediateMultiplexer.singleton;
 
-  Instruction instruction = Instruction.empty();
+  Instruction instruction = Instruction.nopRISCV();
 
   void updateInstruction() {
     final instrWord = instructionRegister.getInstrWord();
-    instruction = Instruction(instrWord: instrWord);
+    instruction = Instruction(
+      instrWord: instrWord,
+      instructionType: InstructionType.typeRISCV,
+    );
   }
 
   void updateRegSelMultiplexer() {

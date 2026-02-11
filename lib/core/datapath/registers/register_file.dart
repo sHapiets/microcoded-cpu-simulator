@@ -15,8 +15,13 @@ class RegisterFile extends Component {
     RegisterAddress.pc: Word.zero(),
     RegisterAddress.x0: Word.zero(),
     RegisterAddress.x1: Word(intData: 4),
-    RegisterAddress.x2: Word(intData: 3),
+    RegisterAddress.x2: Word(intData: 0xF0F0F0F),
     RegisterAddress.x3: Word(intData: 0),
+    RegisterAddress.x4: Word(intData: 4),
+    RegisterAddress.x5: Word(intData: 0),
+    RegisterAddress.x6: Word(intData: 0),
+    RegisterAddress.x7: Word(intData: 8),
+    RegisterAddress.x8: Word(intData: 10),
   };
 
   bool writeEnable = false;

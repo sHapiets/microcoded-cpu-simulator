@@ -63,8 +63,8 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
-      - lib/rom/microcoded_rom.ucr
-      - lib/rom/dispatch_table.ucd
+      - lib/rom/riscv_preset/microcoded_rom.ucr
+      - lib/rom/riscv_preset/dispatch_table.ucd
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

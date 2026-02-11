@@ -8,6 +8,7 @@ class Bus extends Component {
 
   Data busData = Word.zero();
   bool busOccupied = false;
+  bool get isFloating => !busOccupied;
   Map<Buffer, bool> buffers = {
     Buffer.immEn: false,
     Buffer.regEn: false,
@@ -26,7 +27,7 @@ class Bus extends Component {
       busOccupied = true;
     } else {
       throw FormatException(
-        '[BUS ERROR] --> Bus is occupied by more than one buffer. Check loaded uCoded ROM.',
+        '[BUS ERROR] --> Bus is occupied by more than one buffer. Check loaded microcoded ROM.',
       );
     }
   }
@@ -38,17 +39,18 @@ class Bus extends Component {
   }
 
   void passData({required Data newData, required Buffer componentBuffer}) {
-    if (busOccupied == false) {
-      throw FormatException(
-        '[BUS ERROR] --> Bus is currently floating, as all buffers are inactive. Check loaded uCoded ROM.',
-      );
-    }
     if (buffers[componentBuffer] == true) {
       busData = newData;
     }
   }
 
   Data getData() {
+    if (isFloating) {
+      throw FormatException(
+        '[BUS ERROR] --> Bus is currently floating, but a component attempts to load data from it. Check loaded uCoded ROM.',
+      );
+    }
+
     return busData;
   }
 }

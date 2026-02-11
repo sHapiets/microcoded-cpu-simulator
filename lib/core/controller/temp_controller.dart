@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:microcoded_cpu_coe197/core/controller/instruction_controller.dart';
 import 'package:microcoded_cpu_coe197/core/controller/signal_controller.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/alu.dart';
@@ -26,6 +25,8 @@ class TempController {
   final bus = Bus.singleton;
 
   void runInstructions(int counter) {
+    instructionController.readComponents();
+    bus.resetAllBuffers();
     SignalController.singleton.updateComponents();
     instructionController.updateComponents();
 
@@ -43,14 +44,11 @@ class TempController {
     registerFile.readBus();
     memory.readBus();
     instructionRegister.readBus();
-    immediateMultiplexer.readBus();
+    immediateMultiplexer.readBus(); /* 
     debugPrint(
       "instr: ${instructionController.instruction.instrWord.asBitString(32)}",
     );
-    debugPrint("ldIR: ${instructionRegister.loadEnable}");
-
-    bus.resetAllBuffers();
-    instructionController.readComponents();
+    debugPrint("ldIR: ${instructionRegister.loadEnable}"); */
     //debugPrint("${memory.memoryAddress.asBitString(32)}");
   }
 }

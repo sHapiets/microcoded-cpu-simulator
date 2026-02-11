@@ -1,7 +1,5 @@
-import 'package:flutter/widgets.dart';
 import 'package:microcoded_cpu_coe197/core/controller/instruction_controller.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/riscv_decoder.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -12,7 +10,7 @@ class MicrocodeController {
   Word microcodePC = Word.zero();
   Word jumpBranchAddress = Word.zero();
   List<Map<MicrocodeSignal, Data>> microcodeROM = [];
-  Map<InstructionType, Word> dispatchMap = {};
+  Map<String, Word> dispatchMap = {};
 
   Map<MicrocodeSignal, Data> getSignals() {
     return microcodeROM[microcodePC.intData];
@@ -73,6 +71,7 @@ class MicrocodeController {
       final microcodeAddress = Data.fromHexString(
         microcodeAddressString,
       ).asWord();
+      /* 
       final instructionType = InstructionType.values.firstWhere(
         (type) => instrTypeString == type.name,
         orElse: () {
@@ -80,10 +79,16 @@ class MicrocodeController {
             "[DISPATCH TABLE ERROR] --> The instruction: $instrTypeString is not defined. Check loaded dispatch table.",
           );
         },
-      );
+      ); */
+      /* 
+      dispatchMap.update(
+        instructionType.name,
+        (_) => microcodeAddress,
+        ifAbsent: () => microcodeAddress,
+      ); */
 
       dispatchMap.update(
-        instructionType,
+        instrTypeString,
         (_) => microcodeAddress,
         ifAbsent: () => microcodeAddress,
       );
@@ -91,8 +96,8 @@ class MicrocodeController {
   }
 
   Future<void> initializePreset() async {
-    await updateMicrocodeROM('lib/rom/microcoded_rom.ucr');
-    await updateDispatchMap('lib/rom/dispatch_table.ucd');
+    await updateMicrocodeROM('lib/rom/riscv_preset/microcoded_rom.ucr');
+    await updateDispatchMap('lib/rom/riscv_preset/dispatch_table.ucd');
   }
 
   void branch(MicrocodeBranchType branchType) {
@@ -104,12 +109,15 @@ class MicrocodeController {
         microcodePC = microcodePC + Word.one();
 
       case MicrocodeBranchType.dispatch:
+        /* 
         final instructionType =
-            InstructionController.singleton.instruction.instructionType;
+            InstructionController.singleton.instruction.instructionType; */
+        final instructionController = InstructionController.singleton;
+        final instructionType = instructionController.instruction.dispatchKey;
         final dispatchAddress = dispatchMap[instructionType];
         if (dispatchAddress == null) {
           throw FormatException(
-            '[DISPATCH TABLE ERROR] --> Instruction Type: ${instructionType.name} exists, but is not mapped to a dispatch address. Check source code implementation MicrocodeController.',
+            '[DISPATCH TABLE ERROR] --> Instruction Type: "$instructionType" exists, but is not mapped to an address in the dispatched table. Check loaded dispatch table, and source code implementation MicrocodeController.',
           );
         } else {
           microcodePC = dispatchAddress;
