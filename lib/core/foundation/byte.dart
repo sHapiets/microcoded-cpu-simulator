@@ -1,4 +1,4 @@
-import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
+/* import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 
 class Byte extends Data {
   Byte({required super.intData}) {
@@ -9,6 +9,14 @@ class Byte extends Data {
     }
   }
 
+  int asSignedInt() {
+    return intData.toSigned(8);
+  }
+
+  int asUnsignedInt() {
+    return intData;
+  }
+
   factory Byte.zero() {
     return Byte(intData: 0);
   }
@@ -16,9 +24,26 @@ class Byte extends Data {
   factory Byte.four() {
     return Byte(intData: 4);
   }
+  /* 
 
-  factory Byte.fromHexString(String hexString) {
-    final int intData = int.parse(hexString, radix: 16);
+  factory Byte.fromSignedHexString(String hexString) {
+    final int intData = int.parse(hexString, radix: 16).toSigned(8);
+    return Byte(intData: intData);
+  }
+
+  factory Byte.fromSignedBitString(String bitString) {
+    final int intData = int.parse(bitString, radix: 2).toSigned(8);
+    return Byte(intData: intData);
+  } */
+
+  factory Byte.fromUnsignedHexString(String hexString) {
+    final int intData = int.parse(hexString, radix: 16).toUnsigned(8);
+    return Byte(intData: intData);
+  }
+
+  factory Byte.fromUnsignedBitString(String bitString) {
+    final int intData = int.parse(bitString, radix: 2).toUnsigned(8);
     return Byte(intData: intData);
   }
 }
+ */

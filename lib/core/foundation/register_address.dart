@@ -1,19 +1,18 @@
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 
 enum RegisterAddress {
-  pc(dataAddress: Data(intData: 32)),
-  x0(dataAddress: Data(intData: 0)),
-  x1(dataAddress: Data(intData: 1)),
-  x2(dataAddress: Data(intData: 2)),
-  x3(dataAddress: Data(intData: 3)),
-  x4(dataAddress: Data(intData: 4)),
-  x5(dataAddress: Data(intData: 5)),
-  x6(dataAddress: Data(intData: 6)),
-  x7(dataAddress: Data(intData: 7)),
-  x8(dataAddress: Data(intData: 8));
+  pc,
+  x0,
+  x1,
+  x2,
+  x3,
+  x4,
+  x5,
+  x6,
+  x7,
+  x8;
 
-  const RegisterAddress({required this.dataAddress});
-  final Data dataAddress;
+  const RegisterAddress();
 
   static const fromIntDataMapping = {
     32: RegisterAddress.pc,
@@ -29,7 +28,8 @@ enum RegisterAddress {
   };
 
   factory RegisterAddress.fromData(Data data) {
-    final RegisterAddress? addressFromData = fromIntDataMapping[data.intData];
+    final RegisterAddress? addressFromData =
+        fromIntDataMapping[data.asUnsignedInt()];
 
     if (addressFromData == null) {
       throw FormatException(

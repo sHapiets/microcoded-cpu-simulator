@@ -29,10 +29,10 @@ class _MemoryWidgetState extends State<MemoryWidget> {
                 children: memory.byteMemory.map((memoryWord) {
                   return TableRow(
                     children: [
-                      Text(memoryWord[3].asByte().asHexString(2)),
-                      Text(memoryWord[2].asByte().asHexString(2)),
-                      Text(memoryWord[1].asByte().asHexString(2)),
-                      Text(memoryWord[0].asByte().asHexString(2)),
+                      Text(memoryWord[3].asUnsignedHexString(2)),
+                      Text(memoryWord[2].asUnsignedHexString(2)),
+                      Text(memoryWord[1].asUnsignedHexString(2)),
+                      Text(memoryWord[0].asUnsignedHexString(2)),
                     ],
                   );
                 }).toList(),

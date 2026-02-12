@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
+import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 
 class InstructionRegister extends Component {
   InstructionRegister._();
@@ -9,26 +8,26 @@ class InstructionRegister extends Component {
 
   final bus = Bus.singleton;
 
-  Word instrWord = Word.zero();
+  Data instrWord = Data.wordZero();
   bool loadEnable = false;
 
   void setLoadEnable(bool enableBool) {
     loadEnable = enableBool;
   }
 
-  Word getInstrWord() {
+  Data getInstrWord() {
     return instrWord;
   }
 
-  void setInstrWord(Word newInstrWord) {
+  void setInstrWord(Data newInstrWord) {
     instrWord = newInstrWord;
   }
 
   @override
   void readBus() {
     if (loadEnable) {
-      final busData = bus.getData().asWord();
-      setInstrWord(busData);
+      final wordData = bus.getData().asType(DataType.word);
+      setInstrWord(wordData);
     }
     super.readBus();
   }

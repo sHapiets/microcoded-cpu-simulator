@@ -1,22 +1,24 @@
 import 'package:microcoded_cpu_coe197/core/controller/instruction_controller.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/alu/alu.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 class MicrocodeController {
   MicrocodeController._();
   static final singleton = MicrocodeController._();
 
-  Word microcodePC = Word.zero();
-  Word jumpBranchAddress = Word.zero();
+  final alu = ALU.singleton;
+
+  Data microcodePC = Data.wordZero();
+  Data jumpBranchAddress = Data.wordZero();
   List<Map<MicrocodeSignal, Data>> microcodeROM = [];
-  Map<String, Word> dispatchMap = {};
+  Map<String, Data> dispatchMap = {};
 
   Map<MicrocodeSignal, Data> getSignals() {
-    return microcodeROM[microcodePC.intData];
+    return microcodeROM[microcodePC.asUnsignedInt()];
   }
 
-  void setJumpBranchAddress(Word address) {
+  void setJumpBranchAddress(Data address) {
     jumpBranchAddress = address;
   }
 
@@ -28,33 +30,66 @@ class MicrocodeController {
       List<String> uSignalStrings = uInstrString.split('!');
       Map<MicrocodeSignal, Data> uSignals = {};
 
-      uSignals[MicrocodeSignal.ldIR] = Data.fromHexString(uSignalStrings[0]);
-      uSignals[MicrocodeSignal.regSel] = Data.fromHexString(uSignalStrings[1]);
-      uSignals[MicrocodeSignal.regWrite] = Data.fromHexString(
+      uSignals[MicrocodeSignal.ldIR] = Data.fromUnsignedHexString(
+        uSignalStrings[0],
+        DataType.word,
+      );
+      uSignals[MicrocodeSignal.regSel] = Data.fromUnsignedHexString(
+        uSignalStrings[1],
+        DataType.word,
+      );
+      uSignals[MicrocodeSignal.regWrite] = Data.fromUnsignedHexString(
         uSignalStrings[2],
+        DataType.word,
       );
-      uSignals[MicrocodeSignal.regBuffer] = Data.fromHexString(
+      uSignals[MicrocodeSignal.regBuffer] = Data.fromUnsignedHexString(
         uSignalStrings[3],
+        DataType.word,
       );
-      uSignals[MicrocodeSignal.aLoad] = Data.fromHexString(uSignalStrings[4]);
-      uSignals[MicrocodeSignal.bLoad] = Data.fromHexString(uSignalStrings[5]);
-      uSignals[MicrocodeSignal.aluOperation] = Data.fromHexString(
+      uSignals[MicrocodeSignal.aLoad] = Data.fromUnsignedHexString(
+        uSignalStrings[4],
+        DataType.word,
+      );
+      uSignals[MicrocodeSignal.bLoad] = Data.fromUnsignedHexString(
+        uSignalStrings[5],
+        DataType.word,
+      );
+      uSignals[MicrocodeSignal.aluOperation] = Data.fromUnsignedHexString(
         uSignalStrings[6],
+        DataType.word,
       );
-      uSignals[MicrocodeSignal.aluBuffer] = Data.fromHexString(
+      uSignals[MicrocodeSignal.aluBuffer] = Data.fromUnsignedHexString(
         uSignalStrings[7],
+        DataType.word,
       );
-      uSignals[MicrocodeSignal.ldMA] = Data.fromHexString(uSignalStrings[8]);
-      uSignals[MicrocodeSignal.memWr] = Data.fromHexString(uSignalStrings[9]);
-      uSignals[MicrocodeSignal.memBuffer] = Data.fromHexString(
+      uSignals[MicrocodeSignal.ldMA] = Data.fromUnsignedHexString(
+        uSignalStrings[8],
+        DataType.word,
+      );
+      uSignals[MicrocodeSignal.memWr] = Data.fromUnsignedHexString(
+        uSignalStrings[9],
+        DataType.word,
+      );
+      uSignals[MicrocodeSignal.memBuffer] = Data.fromUnsignedHexString(
         uSignalStrings[10],
+        DataType.word,
       );
-      uSignals[MicrocodeSignal.immSel] = Data.fromHexString(uSignalStrings[11]);
-      uSignals[MicrocodeSignal.immBuffer] = Data.fromHexString(
+      uSignals[MicrocodeSignal.immSel] = Data.fromUnsignedHexString(
+        uSignalStrings[11],
+        DataType.word,
+      );
+      uSignals[MicrocodeSignal.immBuffer] = Data.fromUnsignedHexString(
         uSignalStrings[12],
+        DataType.word,
       );
-      uSignals[MicrocodeSignal.uBr] = Data.fromHexString(uSignalStrings[13]);
-      uSignals[MicrocodeSignal.jump] = Data.fromHexString(uSignalStrings[14]);
+      uSignals[MicrocodeSignal.jump] = Data.fromUnsignedHexString(
+        uSignalStrings[14],
+        DataType.word,
+      );
+      uSignals[MicrocodeSignal.uBr] = Data.fromUnsignedHexString(
+        uSignalStrings[13],
+        DataType.word,
+      );
 
       microcodeROM.add(uSignals);
     }
@@ -68,24 +103,10 @@ class MicrocodeController {
       final instrTypeString = dispatchEntry.split(">>")[0];
       final microcodeAddressString = dispatchEntry.split(">>")[1];
 
-      final microcodeAddress = Data.fromHexString(
+      final microcodeAddress = Data.fromUnsignedHexString(
         microcodeAddressString,
-      ).asWord();
-      /* 
-      final instructionType = InstructionType.values.firstWhere(
-        (type) => instrTypeString == type.name,
-        orElse: () {
-          throw FormatException(
-            "[DISPATCH TABLE ERROR] --> The instruction: $instrTypeString is not defined. Check loaded dispatch table.",
-          );
-        },
-      ); */
-      /* 
-      dispatchMap.update(
-        instructionType.name,
-        (_) => microcodeAddress,
-        ifAbsent: () => microcodeAddress,
-      ); */
+        DataType.word,
+      );
 
       dispatchMap.update(
         instrTypeString,
@@ -103,15 +124,28 @@ class MicrocodeController {
   void branch(MicrocodeBranchType branchType) {
     switch (branchType) {
       case MicrocodeBranchType.next:
-        microcodePC = microcodePC + Word.one();
+        microcodePC = Data.word(microcodePC.unsignedInt + 1);
 
       case MicrocodeBranchType.spin:
-        microcodePC = microcodePC + Word.one();
+        microcodePC = Data.word(microcodePC.unsignedInt + 1);
+
+      case MicrocodeBranchType.eqZero:
+        final aluData = alu.getResult();
+        if (aluData.asUnsignedInt() == 0) {
+          microcodePC = jumpBranchAddress;
+        } else {
+          microcodePC = Data.word(microcodePC.unsignedInt + 1);
+        }
+
+      case MicrocodeBranchType.notEqZero:
+        final aluData = alu.getResult();
+        if (aluData.asUnsignedInt() != 0) {
+          microcodePC = jumpBranchAddress;
+        } else {
+          microcodePC = Data.word(microcodePC.unsignedInt + 1);
+        }
 
       case MicrocodeBranchType.dispatch:
-        /* 
-        final instructionType =
-            InstructionController.singleton.instruction.instructionType; */
         final instructionController = InstructionController.singleton;
         final instructionType = instructionController.instruction.dispatchKey;
         final dispatchAddress = dispatchMap[instructionType];
@@ -152,6 +186,8 @@ enum MicrocodeSignal {
 enum MicrocodeBranchType {
   next,
   spin,
+  eqZero,
+  notEqZero,
   dispatch,
   jump;
 
@@ -159,16 +195,18 @@ enum MicrocodeBranchType {
   static const Map<int, MicrocodeBranchType> fromIntDataMapping = {
     0: MicrocodeBranchType.next,
     1: MicrocodeBranchType.jump,
+    2: MicrocodeBranchType.eqZero,
+    3: MicrocodeBranchType.notEqZero,
     4: MicrocodeBranchType.dispatch,
     5: MicrocodeBranchType.spin,
   };
 
   factory MicrocodeBranchType.fromData(Data data) {
-    final branch = fromIntDataMapping[data.intData];
+    final branch = fromIntDataMapping[data.asUnsignedInt()];
 
     if (branch == null) {
       throw FormatException(
-        '[MICROCODE ERROR] --> Data.intData: ${data.intData} does not have a mapped branch type. Check the loaded ROM.',
+        '[MICROCODE ERROR] --> Data.intData: ${data.asUnsignedInt()} does not have a mapped branch type. Check the loaded ROM.',
       );
     } else {
       return branch;

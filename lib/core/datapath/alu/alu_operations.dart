@@ -39,11 +39,11 @@ enum ALUOperation {
   };
 
   factory ALUOperation.fromData(Data data) {
-    final ALUOperation? aluOp = fromIntDataMapping[data.intData];
+    final ALUOperation? aluOp = fromIntDataMapping[data.asUnsignedInt()];
 
     if (aluOp == null) {
       throw FormatException(
-        '[ALUOPERATION ERROR] --> Data.intData: ${data.intData} does not map to a valid ALUOperation. Check ROM ALUOp.',
+        '[ALUOPERATION ERROR] --> Data.intData: ${data.asUnsignedInt()} does not map to a valid ALUOperation. Check ROM ALUOp.',
       );
     }
 

@@ -41,7 +41,7 @@ enum RegSel {
   };
 
   factory RegSel.fromData(Data data) {
-    final RegSel? regSelFromData = fromIntDataMapping[data.intData];
+    final RegSel? regSelFromData = fromIntDataMapping[data.asUnsignedInt()];
 
     if (regSelFromData == null) {
       throw FormatException(

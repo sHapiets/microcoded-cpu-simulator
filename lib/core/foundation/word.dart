@@ -1,4 +1,4 @@
-import 'package:microcoded_cpu_coe197/core/foundation/byte.dart';
+/* import 'package:microcoded_cpu_coe197/core/foundation/byte.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 
 class Word extends Data {
@@ -19,6 +19,14 @@ class Word extends Data {
     ];
   }
 
+  int asSignedInt() {
+    return intData.toSigned(32);
+  }
+
+  int asUnsignedInt() {
+    return intData;
+  }
+
   factory Word.zero() {
     return Word(intData: 0);
   }
@@ -29,15 +37,32 @@ class Word extends Data {
 
   factory Word.fromBytes(List<Byte> orderedBytesLittleEndian) {
     int sumIntData = 0;
-    sumIntData += orderedBytesLittleEndian[0].intData;
-    sumIntData += orderedBytesLittleEndian[1].intData << 8;
-    sumIntData += orderedBytesLittleEndian[2].intData << 16;
-    sumIntData += orderedBytesLittleEndian[3].intData << 24;
+    sumIntData += orderedBytesLittleEndian[0].asUnsignedInt();
+    sumIntData += orderedBytesLittleEndian[1].asUnsignedInt() << 8;
+    sumIntData += orderedBytesLittleEndian[2].asUnsignedInt() << 16;
+    sumIntData += orderedBytesLittleEndian[3].asUnsignedInt() << 24;
     return Word(intData: sumIntData);
   }
 
-  @override
-  Word operator +(Data other) {
-    return Word(intData: intData + other.intData);
+  /* 
+  factory Word.fromSignedHexString(String hexString) {
+    final int intData = int.parse(hexString, radix: 16).toSigned(32);
+    return Word(intData: intData);
+  }
+
+  factory Word.fromSignedBitString(String bitString) {
+    final int intData = int.parse(bitString, radix: 2).toSigned(32);
+    return Word(intData: intData);
+  } */
+
+  factory Word.fromUnsignedHexString(String hexString) {
+    final int intData = int.parse(hexString, radix: 16).toUnsigned(32);
+    return Word(intData: intData);
+  }
+
+  factory Word.fromUnsignedBitString(String bitString) {
+    final int intData = int.parse(bitString, radix: 2).toUnsigned(32);
+    return Word(intData: intData);
   }
 }
+ */

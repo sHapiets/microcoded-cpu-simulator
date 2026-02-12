@@ -2,24 +2,23 @@ import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/immediate_multi
 import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/reg_sel_multiplexer.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/register_address.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 
 class RISCVDecoder {
-  static RISCVInstruction instructionFromWord(Word instrWord) {
+  static RISCVInstruction instructionFromWord(Data instrWord) {
     List<Data> instrDiv = [
-      Data(intData: instrWord.intData & 0x7F),
-      Data(intData: (instrWord.intData >> 7) & 0x1F),
-      Data(intData: (instrWord.intData >> 12) & 0x7),
-      Data(intData: (instrWord.intData >> 15) & 0x1F),
-      Data(intData: (instrWord.intData >> 20) & 0x1F),
-      Data(intData: (instrWord.intData >> 25) & 0x7F),
+      Data.word(instrWord.asUnsignedInt() & 0x7F),
+      Data.word((instrWord.asUnsignedInt() >> 7) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 12) & 0x7),
+      Data.word((instrWord.asUnsignedInt() >> 15) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 20) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 25) & 0x7F),
     ];
 
-    String opCodeString = instrDiv[0].asBitString(7);
+    String opCodeString = instrDiv[0].asUnsignedBitString(7);
     switch (opCodeString) {
       case "0110011":
         final functString =
-            "${instrDiv[2].asBitString(3)}${instrDiv[5].asBitString(7)}";
+            "${instrDiv[2].asUnsignedBitString(3)}${instrDiv[5].asUnsignedBitString(7)}";
         switch (functString) {
           case "0000000000":
             return RISCVInstruction.add;
@@ -48,10 +47,10 @@ class RISCVDecoder {
         }
 
       case "0010011":
-        final String funct3string = instrDiv[2].asBitString(3);
+        final String funct3string = instrDiv[2].asUnsignedBitString(3);
         String funct7string = "";
         if (funct3string == "001" || funct3string == "101") {
-          funct7string = instrDiv[5].asBitString(7);
+          funct7string = instrDiv[5].asUnsignedBitString(7);
         }
 
         final functString = "$funct3string$funct7string";
@@ -79,9 +78,27 @@ class RISCVDecoder {
               '[RISCV-INSTRUCTION ERROR] --> I-type Instruction of FUNCT3|FUNCT7: (functString: $functString) does not exist. Check loaded instruction.',
             );
         }
+      case "0000011":
+        final funct3string = instrDiv[2].asUnsignedBitString(3);
+        switch (funct3string) {
+          case "000":
+            return RISCVInstruction.lb;
+          case "100":
+            return RISCVInstruction.lbu;
+          case "001":
+            return RISCVInstruction.lh;
+          case "101":
+            return RISCVInstruction.lhu;
+          case "010":
+            return RISCVInstruction.lw;
+          default:
+            throw FormatException(
+              '[RISCV-INSTRUCTION ERROR] --> I-type LOAD Instruction of FUNCT3: (functString: $funct3string) does not exist. Check loaded instruction.',
+            );
+        }
 
       case "0100011":
-        final String funct3string = instrDiv[2].asBitString(3);
+        final String funct3string = instrDiv[2].asUnsignedBitString(3);
         switch (funct3string) {
           case "000":
             return RISCVInstruction.sb;
@@ -106,16 +123,16 @@ class RISCVDecoder {
   }
 
   static Map<RegSel, RegisterAddress> instrRegSelMapFromWord(
-    Word instrWord,
+    Data instrWord,
     RISCVOpCodeType opcode,
   ) {
     List<Data> instrDiv = [
-      Data(intData: instrWord.intData & 0x7F),
-      Data(intData: (instrWord.intData >> 7) & 0x1F),
-      Data(intData: (instrWord.intData >> 12) & 0x7),
-      Data(intData: (instrWord.intData >> 15) & 0x1F),
-      Data(intData: (instrWord.intData >> 20) & 0x1F),
-      Data(intData: (instrWord.intData >> 25) & 0x7F),
+      Data.word(instrWord.asUnsignedInt() & 0x7F),
+      Data.word((instrWord.asUnsignedInt() >> 7) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 12) & 0x7),
+      Data.word((instrWord.asUnsignedInt() >> 15) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 20) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 25) & 0x7F),
     ];
 
     switch (opcode) {
@@ -172,26 +189,28 @@ class RISCVDecoder {
   }
 
   static Map<ImmSel, Data> instrImmSelMapFromWord(
-    Word instrWord,
+    Data instrWord,
     RISCVOpCodeType opcode,
   ) {
     List<Data> instrDiv = [
-      Data(intData: instrWord.intData & 0x7F),
-      Data(intData: (instrWord.intData >> 7) & 0x1F),
-      Data(intData: (instrWord.intData >> 12) & 0x7),
-      Data(intData: (instrWord.intData >> 15) & 0x1F),
-      Data(intData: (instrWord.intData >> 20) & 0x1F),
-      Data(intData: (instrWord.intData >> 25) & 0x7F),
+      Data.word(instrWord.asUnsignedInt() & 0x7F),
+      Data.word((instrWord.asUnsignedInt() >> 7) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 12) & 0x7),
+      Data.word((instrWord.asUnsignedInt() >> 15) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 20) & 0x1F),
+      Data.word((instrWord.asUnsignedInt() >> 25) & 0x7F),
     ];
 
-    final I = "${instrDiv[5].asBitString(7)}${instrDiv[4].asBitString(5)}";
-    final xI = instrDiv[4].asBitString(5);
-    final S = "${instrDiv[5].asBitString(7)}${instrDiv[1].asBitString(5)}";
+    final I =
+        "${instrDiv[5].asUnsignedBitString(7)}${instrDiv[4].asUnsignedBitString(5)}";
+    final xI = instrDiv[4].asUnsignedBitString(5);
+    final S =
+        "${instrDiv[5].asUnsignedBitString(7)}${instrDiv[1].asUnsignedBitString(5)}";
 
     return {
-      ImmSel.immTypeI: Data.fromBitString(I),
-      ImmSel.immTypeXI: Data.fromBitString(xI),
-      ImmSel.immTypeS: Data.fromBitString(S),
+      ImmSel.immTypeI: Data.fromUnsignedBitString(I, DataType.word),
+      ImmSel.immTypeXI: Data.fromUnsignedBitString(xI, DataType.word),
+      ImmSel.immTypeS: Data.fromUnsignedBitString(S, DataType.word),
     };
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:microcoded_cpu_coe197/core/controller/microcode_controller.dart';
 import 'package:microcoded_cpu_coe197/core/controller/temp_controller.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/alu/alu.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/alu/alu_operations.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/b.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
@@ -41,6 +43,7 @@ class _TestDisplayState extends State<TestDisplay> {
   int counter = 0;
   final a = A.singleton;
   final b = B.singleton;
+  final alu = ALU.singleton;
   final registerFile = RegisterFile.singleton;
   final regSelMultiplexer = RegSelMultiplexer.singleton;
   final microcodeController = MicrocodeController.singleton;
@@ -50,6 +53,21 @@ class _TestDisplayState extends State<TestDisplay> {
   void initState() {
     Memory.singleton.presetInstructionLoad();
     microcodeController.initializePreset();
+    /* 
+    Data data = Data.halfWord(-128);
+    debugPrint("type: ${data.dataType.name}");
+    debugPrint("signed: ${data.asSignedInt()}");
+    debugPrint("unsigned: ${data.asUnsignedInt()}");
+ */
+
+    a.data = Data.halfWord(-1);
+    b.data = Data.halfWord(1);
+    alu.operation = ALUOperation.sltu;
+    alu.operate();
+    debugPrint("type: ${alu.result.dataType.name}");
+    debugPrint("signed: ${alu.result.asSignedInt()}");
+    debugPrint("unsigned: ${alu.result.asUnsignedInt()}");
+
     super.initState();
   }
 
@@ -100,7 +118,7 @@ class _TestDisplayState extends State<TestDisplay> {
               ),
               onSubmitted: (value) {
                 final decodedInstruction = Instruction(
-                  instrWord: Data.fromBitString(value).asWord(),
+                  instrWord: Data.fromUnsignedBitString(value, DataType.word),
                   instructionType: InstructionType.typeRISCV,
                 );
                 debugPrint(
@@ -117,7 +135,7 @@ class _TestDisplayState extends State<TestDisplay> {
             child: Transform.translate(
               offset: Offset(0, 50),
               child: Text(
-                "Next MircocodePC: ${MicrocodeController.singleton.microcodePC.intData}",
+                "Next MircocodePC: ${MicrocodeController.singleton.microcodePC.asUnsignedInt()}",
               ),
             ),
           ),
@@ -131,8 +149,9 @@ class _TestDisplayState extends State<TestDisplay> {
                 return TableRow(
                   children: [
                     Center(child: Text(register.key.name)),
-                    Center(child: Text("${register.value.intData}")),
-                    Center(child: Text(register.value.asBitString(5))),
+                    Center(child: Text("${register.value.asUnsignedInt()}")),
+                    Center(child: Text("${register.value.asSignedInt()}")),
+                    Center(child: Text(register.value.asUnsignedBitString(5))),
                   ],
                 );
               }).toList(),
@@ -146,8 +165,23 @@ class _TestDisplayState extends State<TestDisplay> {
               children: [
                 TableRow(
                   children: [
-                    Center(child: Text('A: ${a.data.intData}')),
-                    Center(child: Text('B: ${b.data.intData}')),
+                    Center(child: Text('UNSIGNED:')),
+                    Center(child: Text('A: ${a.data.asUnsignedInt()}')),
+                    Center(child: Text('B: ${b.data.asUnsignedInt()}')),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    Center(child: Text('SIGNED:')),
+                    Center(child: Text('A: ${a.data.asSignedInt()}')),
+                    Center(child: Text('B: ${b.data.asSignedInt()}')),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    Center(child: Text('TYPE:')),
+                    Center(child: Text('A: ${a.data.dataType.name}')),
+                    Center(child: Text('B: ${b.data.dataType.name}')),
                   ],
                 ),
               ],

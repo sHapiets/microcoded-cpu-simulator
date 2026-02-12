@@ -3,11 +3,9 @@ import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/reg_sel_multipl
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/register_address.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/riscv_decoder.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 
-class Instruction extends Data {
-  Instruction({required this.instrWord, required this.instructionType})
-    : super(intData: instrWord.intData) {
+class Instruction {
+  Instruction({required this.instrWord, required this.instructionType}) {
     switch (instructionType) {
       case InstructionType.typeRISCV:
         final RISCVInstruction instruction = RISCVDecoder.instructionFromWord(
@@ -28,7 +26,7 @@ class Instruction extends Data {
     }
   }
 
-  final Word instrWord;
+  final Data instrWord;
   late final String dispatchKey;
   late final InstructionType instructionType;
   late final Map<RegSel, RegisterAddress> instrRegSelMapping;
@@ -36,7 +34,7 @@ class Instruction extends Data {
 
   factory Instruction.nopRISCV() {
     return Instruction(
-      instrWord: Word.zero(),
+      instrWord: Data.wordZero(),
       instructionType: InstructionType.typeRISCV,
     );
   }

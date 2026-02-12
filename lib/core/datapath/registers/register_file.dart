@@ -1,8 +1,8 @@
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/reg_sel_multiplexer.dart';
+import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/register_address.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 
 class RegisterFile extends Component {
   RegisterFile._();
@@ -11,17 +11,17 @@ class RegisterFile extends Component {
   final regSelMultiplexer = RegSelMultiplexer.singleton;
   final bus = Bus.singleton;
 
-  Map<RegisterAddress, Word> registers = {
-    RegisterAddress.pc: Word.zero(),
-    RegisterAddress.x0: Word.zero(),
-    RegisterAddress.x1: Word(intData: 4),
-    RegisterAddress.x2: Word(intData: 0xF0F0F0F),
-    RegisterAddress.x3: Word(intData: 0),
-    RegisterAddress.x4: Word(intData: 4),
-    RegisterAddress.x5: Word(intData: 0),
-    RegisterAddress.x6: Word(intData: 0),
-    RegisterAddress.x7: Word(intData: 8),
-    RegisterAddress.x8: Word(intData: 10),
+  Map<RegisterAddress, Data> registers = {
+    RegisterAddress.pc: Data.wordZero(),
+    RegisterAddress.x0: Data.wordZero(),
+    RegisterAddress.x1: Data.word(4),
+    RegisterAddress.x2: Data.word(0xF0F0F0F),
+    RegisterAddress.x3: Data.wordZero(),
+    RegisterAddress.x4: Data.word(4),
+    RegisterAddress.x5: Data.wordZero(),
+    RegisterAddress.x6: Data.wordZero(),
+    RegisterAddress.x7: Data.word(-1),
+    RegisterAddress.x8: Data.word(10),
   };
 
   bool writeEnable = false;
@@ -34,7 +34,7 @@ class RegisterFile extends Component {
 
   void writeRegister() {
     final selectedAddress = regSelMultiplexer.getRegisterAddress();
-    registers[selectedAddress] = bus.getData().asWord();
+    registers[selectedAddress] = bus.getData();
   }
 
   void readRegister() {

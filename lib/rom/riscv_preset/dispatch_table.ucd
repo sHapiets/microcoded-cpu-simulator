@@ -18,6 +18,5 @@ srli>>30
 srai>>33
 slti>>36
 sltiu>>39
-sb>>3c
-sh>>41
-sw>>46
+lb>>3c
+lbu>>4c

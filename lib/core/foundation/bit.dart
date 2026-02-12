@@ -1,4 +1,4 @@
-import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
+/* import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 
 class Bit extends Data {
   Bit({required super.intData}) {
@@ -26,3 +26,4 @@ class Bit extends Data {
     return Bit(intData: 1);
   }
 }
+ */

@@ -1,12 +1,11 @@
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 
 class Bus extends Component {
   Bus._();
   static final singleton = Bus._();
 
-  Data busData = Word.zero();
+  Data busData = Data.wordZero();
   bool busOccupied = false;
   bool get isFloating => !busOccupied;
   Map<Buffer, bool> buffers = {
@@ -34,7 +33,7 @@ class Bus extends Component {
 
   void resetAllBuffers() {
     busOccupied = false;
-    busData = Word.zero();
+    busData = Data.wordZero();
     buffers.updateAll((_, _) => false);
   }
 

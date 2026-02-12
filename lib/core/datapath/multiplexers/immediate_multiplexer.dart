@@ -1,9 +1,6 @@
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/byte.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/half_word.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 
 class ImmediateMultiplexer extends Component {
   ImmediateMultiplexer._();
@@ -13,14 +10,15 @@ class ImmediateMultiplexer extends Component {
 
   ImmSel immSel = ImmSel.immTypeI;
   Map<ImmSel, Data> immediateMapping = {
-    ImmSel.immTypeI: Word.zero(),
-    ImmSel.immTypeXI: Word.zero(),
-    ImmSel.immTypeS: Word.zero(),
-    ImmSel.immTypeB: Word.zero(),
-    ImmSel.immTypeU: Word.zero(),
-    ImmSel.immTypeJ: Word.zero(),
-    ImmSel.maskByte: Byte(intData: 0xFF),
-    ImmSel.maskHalf: HalfWord(intData: 0xFFFF),
+    ImmSel.immTypeI: Data.wordZero(),
+    ImmSel.immTypeXI: Data.wordZero(),
+    ImmSel.immTypeS: Data.wordZero(),
+    ImmSel.immTypeB: Data.wordZero(),
+    ImmSel.immTypeU: Data.wordZero(),
+    ImmSel.immTypeJ: Data.wordZero(),
+    ImmSel.maskByte: Data.byte(-1),
+    ImmSel.maskHalf: Data.halfWord(-1),
+    ImmSel.maskWord: Data.word(-1),
   };
 
   void setImmSel(ImmSel newImmSel) {
@@ -53,7 +51,8 @@ enum ImmSel {
   immTypeU,
   immTypeJ,
   maskByte,
-  maskHalf;
+  maskHalf,
+  maskWord;
 
   const ImmSel();
   static const Map<int, ImmSel> fromIntDataMapping = {
@@ -64,13 +63,14 @@ enum ImmSel {
     4: immTypeJ,
     5: maskByte,
     6: maskHalf,
+    7: maskWord,
   };
 
   factory ImmSel.fromData(Data data) {
-    final immSelected = fromIntDataMapping[data.intData];
+    final immSelected = fromIntDataMapping[data.asUnsignedInt()];
     if (immSelected == null) {
       throw FormatException(
-        '[IMM.SEL ERROR] --> Data.intData: ${data.intData} does not correspond to any ImmSel value. Check the loaded ROM.',
+        '[IMM.SEL ERROR] --> Data.intData: ${data.asUnsignedInt()} does not correspond to any ImmSel value. Check the loaded ROM.',
       );
     } else {
       return immSelected;

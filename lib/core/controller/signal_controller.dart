@@ -34,36 +34,36 @@ class SignalController extends Controller {
 
       switch (signal) {
         case MicrocodeSignal.ldIR:
-          instructionRegister.setLoadEnable(data.asBit().asBool());
+          instructionRegister.setLoadEnable(data.asBool());
         case MicrocodeSignal.regSel:
           RegSel selectedRegSel = RegSel.fromData(data);
           regSelMultiplexer.setRegSel(selectedRegSel);
         case MicrocodeSignal.regWrite:
-          registerFile.setWriteEnable(data.asBit().asBool());
+          registerFile.setWriteEnable(data.asBool());
         case MicrocodeSignal.regBuffer:
-          bus.setBuffer(Buffer.regEn, data.asBit().asBool());
+          bus.setBuffer(Buffer.regEn, data.asBool());
         case MicrocodeSignal.aLoad:
-          a.setLoadEnable(data.asBit().asBool());
+          a.setLoadEnable(data.asBool());
         case MicrocodeSignal.bLoad:
-          b.setLoadEnable(data.asBit().asBool());
+          b.setLoadEnable(data.asBool());
         case MicrocodeSignal.aluOperation:
           alu.operation = ALUOperation.fromData(data);
         case MicrocodeSignal.aluBuffer:
-          bus.setBuffer(Buffer.aluEn, data.asBit().asBool());
+          bus.setBuffer(Buffer.aluEn, data.asBool());
         case MicrocodeSignal.ldMA:
-          memory.setAddressLoadEnable(data.asBit().asBool());
+          memory.setAddressLoadEnable(data.asBool());
         case MicrocodeSignal.memWr:
           memory.setMemWriteType(MemoryWriteType.fromData(data));
         case MicrocodeSignal.memBuffer:
-          bus.setBuffer(Buffer.memEn, data.asBit().asBool());
+          bus.setBuffer(Buffer.memEn, data.asBool());
         case MicrocodeSignal.immSel:
           immediateMultiplexer.setImmSel(ImmSel.fromData(data));
         case MicrocodeSignal.immBuffer:
-          bus.setBuffer(Buffer.immEn, data.asBit().asBool());
+          bus.setBuffer(Buffer.immEn, data.asBool());
         case MicrocodeSignal.uBr:
           microcodeController.branch(MicrocodeBranchType.fromData(data));
         case MicrocodeSignal.jump:
-          microcodeController.setJumpBranchAddress(data.asWord());
+          microcodeController.setJumpBranchAddress(data);
       }
     }
   }

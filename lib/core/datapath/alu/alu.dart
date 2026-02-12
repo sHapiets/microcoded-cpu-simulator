@@ -4,7 +4,6 @@ import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/b.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
-import 'package:microcoded_cpu_coe197/core/foundation/word.dart';
 
 class ALU extends Component {
   ALU._();
@@ -15,50 +14,93 @@ class ALU extends Component {
   final bus = Bus.singleton;
 
   ALUOperation operation = ALUOperation.add;
-  Word result = Word.zero();
+  Data result = Data.wordZero();
 
   void operate() {
+    final int aMinBitLength = a.data.dataType.bitLength;
+    final int bMinBitLength = b.data.dataType.bitLength;
+    final minDataType = (aMinBitLength > bMinBitLength)
+        ? a.data.dataType
+        : b.data.dataType;
+    final maxDataType = (aMinBitLength > bMinBitLength)
+        ? b.data.dataType
+        : a.data.dataType;
+
     switch (operation) {
       case ALUOperation.copyA:
-        result = a.data.asWord();
+        result = a.data;
       case ALUOperation.copyB:
-        result = b.data.asWord();
+        result = b.data;
       case ALUOperation.inc1toA:
-        result = (a.data + Data(intData: 1)).asWord();
+        result = Data.signedAdd(a.data, Data.word(1), a.data.dataType);
       case ALUOperation.dec1toA:
-        result = (a.data - Data(intData: 1)).asWord();
+        result = Data.signedSub(a.data, Data.word(1), a.data.dataType);
       case ALUOperation.inc4toA:
-        result = (a.data + Data(intData: 4)).asWord();
+        result = Data.signedAdd(a.data, Data.word(4), a.data.dataType);
       case ALUOperation.dec4toA:
-        result = (a.data - Data(intData: 4)).asWord();
+        result = Data.signedSub(a.data, Data.word(4), a.data.dataType);
       case ALUOperation.add:
-        result = (a.data + b.data).asWord();
+        result = Data.signedAdd(a.data, b.data, minDataType);
       case ALUOperation.sub:
-        result = (a.data - b.data).asWord();
+        result = Data.signedSub(a.data, b.data, minDataType);
       case ALUOperation.slt:
-        final aSigned = a.data.intData.toSigned(32);
-        final bSigned = b.data.intData.toSigned(32);
-        result = (aSigned < bSigned) ? Word.one() : Word.zero();
+        final aSigned = a.data.asSignedInt();
+        final bSigned = b.data.asSignedInt();
+        result = (aSigned < bSigned) ? Data.bit(1) : Data.bit(0);
       case ALUOperation.sltu:
-        final aUnsigned = a.data.intData.toUnsigned(32);
-        final bUnsigned = b.data.intData.toUnsigned(32);
-        result = (aUnsigned < bUnsigned) ? Word.one() : Word.zero();
+        final aUnsigned = a.data.asUnsignedInt();
+        final bUnsigned = b.data.asUnsignedInt();
+        result = (aUnsigned < bUnsigned) ? Data.bit(1) : Data.bit(0);
       case ALUOperation.sra:
-        final b5Bit = Data(intData: (b.data.intData & 0x0F));
-        result = Data(intData: (a.data.intData >> b5Bit.intData)).asWord();
+        final aSigned = a.data.asSignedInt();
+        final shiftAmount = b.data.asUnsignedInt();
+        result = Data(
+          signedInt: (aSigned >> shiftAmount).toSigned(
+            a.data.dataType.bitLength,
+          ),
+          dataType: a.data.dataType,
+        );
       case ALUOperation.srl:
-        final b5Bit = Data(intData: (b.data.intData & 0x0F));
-        result = Data(intData: (a.data.intData >>> b5Bit.intData)).asWord();
+        final aUnsigned = a.data.asUnsignedInt();
+        final shiftAmount = b.data.asUnsignedInt();
+        result = Data(
+          signedInt: aUnsigned >> shiftAmount,
+          dataType: a.data.dataType,
+        );
       case ALUOperation.sll:
-        final b5Bit = Data(intData: (b.data.intData & 0x0F));
-        result = Data(intData: (a.data.intData << b5Bit.intData)).asWord();
+        final aUnsigned = a.data.asUnsignedInt();
+        final shiftAmount = b.data.asUnsignedInt();
+        result = Data(
+          signedInt: aUnsigned << shiftAmount,
+          dataType: a.data.dataType,
+        );
       case ALUOperation.bitXOR:
-        result = Data(intData: a.data.intData ^ b.data.intData).asWord();
+        final aSigned = a.data.asSignedInt();
+        final bSigned = b.data.asSignedInt();
+        final resultSigned = (aSigned ^ bSigned).toSigned(
+          minDataType.bitLength,
+        );
+        result = Data(signedInt: resultSigned, dataType: minDataType);
       case ALUOperation.bitOR:
-        result = Data(intData: a.data.intData | b.data.intData).asWord();
+        final aSigned = a.data.asSignedInt();
+        final bSigned = b.data.asSignedInt();
+        final resultSigned = (aSigned | bSigned).toSigned(
+          minDataType.bitLength,
+        );
+        result = Data(signedInt: resultSigned, dataType: minDataType);
       case ALUOperation.bitAND:
-        result = Data(intData: a.data.intData & b.data.intData).asWord();
+        final aSigned = a.data.asSignedInt();
+        final bSigned = b.data.asSignedInt();
+        final resultSigned = (aSigned & bSigned).toSigned(
+          maxDataType.bitLength,
+        );
+        result = Data(signedInt: resultSigned, dataType: maxDataType);
     }
+  }
+
+  Data getResult() {
+    operate();
+    return result;
   }
 
   @override
