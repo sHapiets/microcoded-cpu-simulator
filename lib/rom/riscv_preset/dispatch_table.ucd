@@ -19,4 +19,10 @@ srai>>33
 slti>>36
 sltiu>>39
 lb>>3c
-lbu>>4c
+lbu>>43
+lh>>4a
+lhu>>51
+lw>>59
+sb>>5d
+sh>>62
+sw>>67

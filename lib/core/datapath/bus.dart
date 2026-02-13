@@ -31,6 +31,10 @@ class Bus extends Component {
     }
   }
 
+  bool getBuffer(Buffer buffer) {
+    return buffers[buffer]!;
+  }
+
   void resetAllBuffers() {
     busOccupied = false;
     busData = Data.wordZero();

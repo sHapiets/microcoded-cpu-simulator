@@ -1,5 +1,6 @@
 import 'package:microcoded_cpu_coe197/core/controller/instruction_controller.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/alu.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/memory/memory.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -8,8 +9,10 @@ class MicrocodeController {
   static final singleton = MicrocodeController._();
 
   final alu = ALU.singleton;
+  final memory = Memory.singleton;
 
   Data microcodePC = Data.wordZero();
+  MicrocodeBranchType branchType = MicrocodeBranchType.next;
   Data jumpBranchAddress = Data.wordZero();
   List<Map<MicrocodeSignal, Data>> microcodeROM = [];
   Map<String, Data> dispatchMap = {};
@@ -121,13 +124,19 @@ class MicrocodeController {
     await updateDispatchMap('lib/rom/riscv_preset/dispatch_table.ucd');
   }
 
-  void branch(MicrocodeBranchType branchType) {
+  void setBranchType(MicrocodeBranchType newBranchType) {
+    branchType = newBranchType;
+  }
+
+  void branch() {
     switch (branchType) {
       case MicrocodeBranchType.next:
         microcodePC = Data.word(microcodePC.unsignedInt + 1);
 
       case MicrocodeBranchType.spin:
-        microcodePC = Data.word(microcodePC.unsignedInt + 1);
+        if (memory.isNotBusy()) {
+          microcodePC = Data.word(microcodePC.unsignedInt + 1);
+        }
 
       case MicrocodeBranchType.eqZero:
         final aluData = alu.getResult();
@@ -163,6 +172,10 @@ class MicrocodeController {
   }
 
   void initialize() {}
+
+  void update() {
+    branch();
+  }
 }
 
 enum MicrocodeSignal {

@@ -16,8 +16,8 @@ class ImmediateMultiplexer extends Component {
     ImmSel.immTypeB: Data.wordZero(),
     ImmSel.immTypeU: Data.wordZero(),
     ImmSel.immTypeJ: Data.wordZero(),
-    ImmSel.maskByte: Data.byte(-1),
-    ImmSel.maskHalf: Data.halfWord(-1),
+    ImmSel.int24: Data.byte(24),
+    ImmSel.int16: Data.byte(16),
     ImmSel.maskWord: Data.word(-1),
   };
 
@@ -50,8 +50,8 @@ enum ImmSel {
   immTypeB,
   immTypeU,
   immTypeJ,
-  maskByte,
-  maskHalf,
+  int24,
+  int16,
   maskWord;
 
   const ImmSel();
@@ -61,8 +61,8 @@ enum ImmSel {
     2: immTypeB,
     3: immTypeU,
     4: immTypeJ,
-    5: maskByte,
-    6: maskHalf,
+    5: int24,
+    6: int16,
     7: maskWord,
   };
 

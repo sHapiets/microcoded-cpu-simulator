@@ -61,7 +61,7 @@ class SignalController extends Controller {
         case MicrocodeSignal.immBuffer:
           bus.setBuffer(Buffer.immEn, data.asBool());
         case MicrocodeSignal.uBr:
-          microcodeController.branch(MicrocodeBranchType.fromData(data));
+          microcodeController.setBranchType(MicrocodeBranchType.fromData(data));
         case MicrocodeSignal.jump:
           microcodeController.setJumpBranchAddress(data);
       }

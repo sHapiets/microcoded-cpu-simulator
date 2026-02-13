@@ -22,9 +22,6 @@ class ALU extends Component {
     final minDataType = (aMinBitLength > bMinBitLength)
         ? a.data.dataType
         : b.data.dataType;
-    final maxDataType = (aMinBitLength > bMinBitLength)
-        ? b.data.dataType
-        : a.data.dataType;
 
     switch (operation) {
       case ALUOperation.copyA:
@@ -53,7 +50,7 @@ class ALU extends Component {
         result = (aUnsigned < bUnsigned) ? Data.bit(1) : Data.bit(0);
       case ALUOperation.sra:
         final aSigned = a.data.asSignedInt();
-        final shiftAmount = b.data.asUnsignedInt();
+        final shiftAmount = b.data.asUnsignedInt().clamp(0, 31);
         result = Data(
           signedInt: (aSigned >> shiftAmount).toSigned(
             a.data.dataType.bitLength,
@@ -62,16 +59,20 @@ class ALU extends Component {
         );
       case ALUOperation.srl:
         final aUnsigned = a.data.asUnsignedInt();
-        final shiftAmount = b.data.asUnsignedInt();
+        final shiftAmount = b.data.asUnsignedInt().clamp(0, 31);
         result = Data(
-          signedInt: aUnsigned >> shiftAmount,
+          signedInt: (aUnsigned >> shiftAmount).toSigned(
+            a.data.dataType.bitLength,
+          ),
           dataType: a.data.dataType,
         );
       case ALUOperation.sll:
         final aUnsigned = a.data.asUnsignedInt();
-        final shiftAmount = b.data.asUnsignedInt();
+        final shiftAmount = b.data.asUnsignedInt().clamp(0, 31);
         result = Data(
-          signedInt: aUnsigned << shiftAmount,
+          signedInt: (aUnsigned << shiftAmount).toSigned(
+            a.data.dataType.bitLength,
+          ),
           dataType: a.data.dataType,
         );
       case ALUOperation.bitXOR:
@@ -92,9 +93,9 @@ class ALU extends Component {
         final aSigned = a.data.asSignedInt();
         final bSigned = b.data.asSignedInt();
         final resultSigned = (aSigned & bSigned).toSigned(
-          maxDataType.bitLength,
+          minDataType.bitLength,
         );
-        result = Data(signedInt: resultSigned, dataType: maxDataType);
+        result = Data(signedInt: resultSigned, dataType: minDataType);
     }
   }
 

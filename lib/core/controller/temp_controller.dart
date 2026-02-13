@@ -1,4 +1,5 @@
 import 'package:microcoded_cpu_coe197/core/controller/instruction_controller.dart';
+import 'package:microcoded_cpu_coe197/core/controller/microcode_controller.dart';
 import 'package:microcoded_cpu_coe197/core/controller/signal_controller.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/alu.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
@@ -14,6 +15,8 @@ class TempController {
   static final singleton = TempController._();
 
   final instructionController = InstructionController.singleton;
+  final microcodeController = MicrocodeController.singleton;
+  final signalController = SignalController.singleton;
 
   final a = A.singleton;
   final b = B.singleton;
@@ -25,9 +28,10 @@ class TempController {
   final bus = Bus.singleton;
 
   void runInstructions(int counter) {
+    microcodeController.update();
     instructionController.readComponents();
     bus.resetAllBuffers();
-    SignalController.singleton.updateComponents();
+    signalController.updateComponents();
     instructionController.updateComponents();
 
     alu.updateBus();
@@ -44,7 +48,9 @@ class TempController {
     registerFile.readBus();
     memory.readBus();
     instructionRegister.readBus();
-    immediateMultiplexer.readBus(); /* 
+    immediateMultiplexer.readBus();
+
+    /* 
     debugPrint(
       "instr: ${instructionController.instruction.instrWord.asBitString(32)}",
     );

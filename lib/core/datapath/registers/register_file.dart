@@ -34,7 +34,10 @@ class RegisterFile extends Component {
 
   void writeRegister() {
     final selectedAddress = regSelMultiplexer.getRegisterAddress();
-    registers[selectedAddress] = bus.getData();
+    if (selectedAddress == RegisterAddress.x0) {
+      return;
+    }
+    registers[selectedAddress] = bus.getData().asType(DataType.word);
   }
 
   void readRegister() {

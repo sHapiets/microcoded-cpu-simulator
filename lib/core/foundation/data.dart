@@ -37,20 +37,20 @@ class Data {
         return [this];
       case DataType.fiveBit:
         return [
-          Data.byte(signedInt & 0xFF),
-          Data.byte((signedInt >> 8) & 0xFF),
+          Data.byte((signedInt & 0xFF).toSigned(8)),
+          Data.byte(((signedInt >> 8) & 0xFF).toSigned(8)),
         ];
       case DataType.halfword:
         return [
-          Data.byte(signedInt & 0xFF),
-          Data.byte((signedInt >> 8) & 0xFF),
+          Data.byte((signedInt & 0xFF).toSigned(8)),
+          Data.byte(((signedInt >> 8) & 0xFF).toSigned(8)),
         ];
       case DataType.word:
         return [
-          Data.byte(signedInt & 0xFF),
-          Data.byte((signedInt >> 8) & 0xFF),
-          Data.byte((signedInt >> 16) & 0xFF),
-          Data.byte((signedInt >> 24) & 0xFF),
+          Data.byte((signedInt & 0xFF).toSigned(8)),
+          Data.byte(((signedInt >> 8) & 0xFF).toSigned(8)),
+          Data.byte(((signedInt >> 16) & 0xFF).toSigned(8)),
+          Data.byte(((signedInt >> 24) & 0xFF).toSigned(8)),
         ];
     }
   }
