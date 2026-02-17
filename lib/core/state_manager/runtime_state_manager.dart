@@ -16,15 +16,18 @@ class RuntimeStateManager {
     Instruction.nopRISCV(),
   );
 
-  void update(
+  void updateMicrocodeState(
     int runCyclesInt,
     int nextMicrocodeLineInt,
     MicrocodeBranchType newBranchType,
-    Instruction newInstruction,
   ) {
     runtimeCycles.value = runCyclesInt;
     currentMicrocodeLine.value = nextMicrocodeLine.value;
     nextMicrocodeLine.value = nextMicrocodeLineInt;
     branchType.value = newBranchType;
+  }
+
+  void updateInstructionState(Instruction newInstruction) {
+    currentInstruction.value = newInstruction;
   }
 }

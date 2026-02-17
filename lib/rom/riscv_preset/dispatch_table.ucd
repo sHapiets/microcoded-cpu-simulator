@@ -36,3 +36,6 @@ jal>>88
 jalr>>8c
 auipc>>90
 lui>>95
+addm>>98
+cmovm>>9f
+delm>>a5

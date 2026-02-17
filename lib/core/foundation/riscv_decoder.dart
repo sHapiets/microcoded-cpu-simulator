@@ -156,6 +156,21 @@ class RISCVDecoder {
       case "0000000":
         return RISCVInstruction.nop;
 
+      case "1001001":
+        final String funct3string = instrDiv[2].asUnsignedBitString(3);
+        switch (funct3string) {
+          case "000":
+            return RISCVInstruction.addm;
+          case "100":
+            return RISCVInstruction.cmovm;
+          case "111":
+            return RISCVInstruction.delm;
+          default:
+            throw FormatException(
+              '[RISCV-INSTRUCTION ERROR] --> CISC-type Instruction of FUNCT3: (functString: $funct3string) does not exist. Check loaded instruction.',
+            );
+        }
+
       default:
         throw FormatException(
           '[RISCV-INSTRUCTION ERROR] --> OpCode: "$opCodeString" does not exist. Check loaded instruction',
@@ -219,6 +234,12 @@ class RISCVDecoder {
           RegSel.rs1: RegisterAddress.x0,
           RegSel.rs2: RegisterAddress.x0,
         };
+      case RISCVOpCodeType.C:
+        return {
+          RegSel.rd: RegisterAddress.fromData(instrDiv[1]),
+          RegSel.rs1: RegisterAddress.fromData(instrDiv[3]),
+          RegSel.rs2: RegisterAddress.fromData(instrDiv[4]),
+        };
 
       case RISCVOpCodeType.E:
         return {
@@ -277,7 +298,7 @@ class RISCVDecoder {
   }
 }
 
-enum RISCVOpCodeType { R, I, xI, S, B, U, J, E }
+enum RISCVOpCodeType { R, I, xI, S, B, U, J, E, C }
 
 enum RISCVInstruction {
   nop(opCodeType: RISCVOpCodeType.E),
@@ -324,7 +345,11 @@ enum RISCVInstruction {
   jalr(opCodeType: RISCVOpCodeType.I),
 
   auipc(opCodeType: RISCVOpCodeType.U),
-  lui(opCodeType: RISCVOpCodeType.U);
+  lui(opCodeType: RISCVOpCodeType.U),
+
+  addm(opCodeType: RISCVOpCodeType.R),
+  cmovm(opCodeType: RISCVOpCodeType.R),
+  delm(opCodeType: RISCVOpCodeType.I);
 
   const RISCVInstruction({required this.opCodeType});
   final RISCVOpCodeType opCodeType;

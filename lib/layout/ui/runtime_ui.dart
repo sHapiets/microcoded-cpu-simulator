@@ -39,7 +39,179 @@ class _RuntimeUIState extends State<RuntimeUI> {
     icon: Icon(Icons.play_circle_fill_rounded, size: 30, color: Colors.white),
   );
 
-  final uiInstruction = Column();
+  late final Widget uiInstructionTypeText;
+  late final Widget uiInstrRegSelMap;
+  late final Widget uiInstrImmSelMap;
+
+  @override
+  void initState() {
+    uiInstructionTypeText = ValueListenableBuilder(
+      valueListenable: runtimeStateManager.currentInstruction,
+      builder: (context, value, child) {
+        final text = value.dispatchKey;
+
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          transitionBuilder: (child, animation) {
+            final offsetAnimation =
+                Tween<Offset>(
+                  begin: const Offset(0.25, 0),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOutBack,
+                  ),
+                );
+
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(position: offsetAnimation, child: child),
+            );
+          },
+          child: Text(
+            text,
+            key: ValueKey(text),
+            style: TextStyle(
+              fontSize: 15,
+              fontFamily: "Nunito",
+              color: Colors.white,
+            ),
+          ),
+        );
+      },
+    );
+
+    uiInstrRegSelMap = ValueListenableBuilder(
+      valueListenable: runtimeStateManager.currentInstruction,
+      builder: (context, value, child) {
+        return ListView(
+          children: value.instrRegSelMapping.entries.map((regSel) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 10.0,
+              children: [
+                Text(
+                  "${regSel.key.name}:",
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontFamily: "Nunito",
+                    color: Colors.white,
+                  ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: runtimeStateManager.currentInstruction,
+                  builder: (context, value, child) {
+                    final text = regSel.value.name;
+
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      transitionBuilder: (child, animation) {
+                        final offsetAnimation =
+                            Tween<Offset>(
+                              begin: const Offset(0.25, 0),
+                              end: Offset.zero,
+                            ).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeInOutBack,
+                              ),
+                            );
+
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: Text(
+                        text,
+                        key: ValueKey(text),
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontFamily: "Nunito",
+                          color: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          }).toList(),
+        );
+      },
+    );
+
+    uiInstrImmSelMap = ValueListenableBuilder(
+      valueListenable: runtimeStateManager.currentInstruction,
+      builder: (context, value, child) {
+        return ListView(
+          children: value.instrImmSelMapping.entries.map((immSel) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 10.0,
+              children: [
+                Text(
+                  "${immSel.key.name}:",
+                  style: TextStyle(
+                    fontSize: 7,
+                    fontFamily: "Nunito",
+                    color: Colors.white,
+                  ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: runtimeStateManager.currentInstruction,
+                  builder: (context, value, child) {
+                    final text = "0x${immSel.value.asUnsignedHexString(8)}";
+
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      transitionBuilder: (child, animation) {
+                        final offsetAnimation =
+                            Tween<Offset>(
+                              begin: const Offset(0.25, 0),
+                              end: Offset.zero,
+                            ).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeInOutBack,
+                              ),
+                            );
+
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: Text(
+                        text,
+                        key: ValueKey(text),
+                        style: const TextStyle(
+                          fontSize: 7,
+                          fontFamily: "Roboto-Mono",
+                          color: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          }).toList(),
+        );
+      },
+    );
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +291,7 @@ class _RuntimeUIState extends State<RuntimeUI> {
               ),
             ),
 
+            /// TEXT TITLE microcode
             Center(
               child: Transform.translate(
                 offset: Offset(150, -30),
@@ -133,6 +306,48 @@ class _RuntimeUIState extends State<RuntimeUI> {
                     ],
                   ),
                 ),
+              ),
+            ),
+
+            /// TEXT TITLE instruction
+            Center(
+              child: Transform.translate(
+                offset: Offset(-150, -30),
+                child: Text(
+                  "instruction",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontFamily: "Nunito",
+                    shadows: [
+                      Shadow(offset: Offset(1, 1), color: Colors.black12),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            /// TEXT instructionType
+            Center(
+              child: Transform.translate(
+                offset: Offset(-200, -20),
+                child: uiInstructionTypeText,
+              ),
+            ),
+
+            /// TABLE RegSel
+            Center(
+              child: Transform.translate(
+                offset: Offset(-580, 90),
+                child: uiInstrRegSelMap,
+              ),
+            ),
+
+            /// TABLE ImmSel
+            Center(
+              child: Transform.translate(
+                offset: Offset(-465, 75),
+                child: uiInstrImmSelMap,
               ),
             ),
 

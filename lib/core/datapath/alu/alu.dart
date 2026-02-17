@@ -4,10 +4,13 @@ import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/b.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
+import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 
 class ALU extends Component {
   ALU._();
   static final singleton = ALU._();
+
+  final processorStateManager = ProcessorStateManager.singleton;
 
   final a = A.singleton;
   final b = B.singleton;
@@ -17,6 +20,8 @@ class ALU extends Component {
   Data result = Data.wordZero();
 
   void operate() {
+    processorStateManager.updateALUOpState(operation);
+
     final int aMinBitLength = a.data.dataType.bitLength;
     final int bMinBitLength = b.data.dataType.bitLength;
     final minDataType = (aMinBitLength > bMinBitLength)

@@ -33,13 +33,14 @@ class RuntimeController {
   void updateState() {
     final nextMicrocodeLine = microcodeController.microcodePC.unsignedInt;
     final nextBranchType = microcodeController.branchType;
-    final newInstruction = instructionController.instruction;
-    runtimeStateManager.update(
+    runtimeStateManager.updateMicrocodeState(
       runtimeCycles,
       nextMicrocodeLine,
       nextBranchType,
-      newInstruction,
     );
+
+    final newInstruction = instructionController.instruction;
+    runtimeStateManager.updateInstructionState(newInstruction);
   }
 
   int runtimeCycles = 0;

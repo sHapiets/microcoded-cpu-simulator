@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/alu/alu_operations.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/immediate_multiplexer.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/reg_sel_multiplexer.dart';
@@ -37,6 +38,9 @@ class ProcessorStateManager {
 
   ValueNotifier<RegSel> regSelState = ValueNotifier(RegSel.rd);
   ValueNotifier<ImmSel> immSelState = ValueNotifier(ImmSel.immTypeB);
+  ValueNotifier<ALUOperation> aluOpState = ValueNotifier(
+    ALUOperation.fromData(Data.word(0)),
+  );
 
   void updateRegFileState(RegisterAddress registerAddress, Data newData) {
     regFileState[registerAddress]!.value = newData;
@@ -101,5 +105,9 @@ class ProcessorStateManager {
 
   void updateImmSelState(ImmSel newImmSel) {
     immSelState.value = newImmSel;
+  }
+
+  void updateALUOpState(ALUOperation newALUop) {
+    aluOpState.value = newALUop;
   }
 }
