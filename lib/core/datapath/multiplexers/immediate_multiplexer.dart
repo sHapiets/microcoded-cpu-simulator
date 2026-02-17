@@ -1,12 +1,14 @@
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
+import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 
 class ImmediateMultiplexer extends Component {
   ImmediateMultiplexer._();
   static final singleton = ImmediateMultiplexer._();
 
-  Bus bus = Bus.singleton;
+  final Bus bus = Bus.singleton;
+  final processorStateManager = ProcessorStateManager.singleton;
 
   ImmSel immSel = ImmSel.immTypeI;
   Map<ImmSel, Data> immediateMapping = {
@@ -18,7 +20,7 @@ class ImmediateMultiplexer extends Component {
     ImmSel.immTypeJ: Data.wordZero(),
     ImmSel.int24: Data.byte(24),
     ImmSel.int16: Data.byte(16),
-    ImmSel.maskWord: Data.word(-1),
+    ImmSel.int12: Data.word(12),
   };
 
   void setImmSel(ImmSel newImmSel) {
@@ -31,6 +33,7 @@ class ImmediateMultiplexer extends Component {
 
   @override
   void updateBus() {
+    processorStateManager.updateImmSelState(immSel);
     final immediateData = immediateMapping[immSel];
     if (immediateData == null) {
       throw FormatException(
@@ -52,7 +55,7 @@ enum ImmSel {
   immTypeJ,
   int24,
   int16,
-  maskWord;
+  int12;
 
   const ImmSel();
   static const Map<int, ImmSel> fromIntDataMapping = {
@@ -63,7 +66,7 @@ enum ImmSel {
     4: immTypeJ,
     5: int24,
     6: int16,
-    7: maskWord,
+    7: int12,
   };
 
   factory ImmSel.fromData(Data data) {

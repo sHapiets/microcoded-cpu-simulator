@@ -3,11 +3,13 @@ import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/reg_sel_multiplexer.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/register_address.dart';
+import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 
 class RegisterFile extends Component {
   RegisterFile._();
   static final singleton = RegisterFile._();
 
+  final processorStateManager = ProcessorStateManager.singleton;
   final regSelMultiplexer = RegSelMultiplexer.singleton;
   final bus = Bus.singleton;
 
@@ -26,8 +28,6 @@ class RegisterFile extends Component {
 
   bool writeEnable = false;
 
-  void updatePC() {}
-
   void setWriteEnable(bool enableBool) {
     writeEnable = enableBool;
   }
@@ -37,7 +37,10 @@ class RegisterFile extends Component {
     if (selectedAddress == RegisterAddress.x0) {
       return;
     }
-    registers[selectedAddress] = bus.getData().asType(DataType.word);
+
+    final newData = bus.getData().asType(DataType.word);
+    registers[selectedAddress] = newData;
+    processorStateManager.updateRegFileState(selectedAddress, newData);
   }
 
   void readRegister() {

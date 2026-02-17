@@ -112,6 +112,47 @@ class RISCVDecoder {
             );
         }
 
+      case "1100011":
+        final funct3string = instrDiv[2].asUnsignedBitString(3);
+        switch (funct3string) {
+          case "000":
+            return RISCVInstruction.beq;
+          case "101":
+            return RISCVInstruction.bge;
+          case "111":
+            return RISCVInstruction.bgeu;
+          case "100":
+            return RISCVInstruction.blt;
+          case "110":
+            return RISCVInstruction.bltu;
+          case "001":
+            return RISCVInstruction.bne;
+          default:
+            throw FormatException(
+              '[RISCV-INSTRUCTION ERROR] --> B-type Instruction of FUNCT3: (functString: $funct3string) does not exist. Check loaded instruction.',
+            );
+        }
+
+      case "1101111":
+        return RISCVInstruction.jal;
+
+      case "1100111":
+        final String funct3string = instrDiv[2].asUnsignedBitString(3);
+        switch (funct3string) {
+          case "000":
+            return RISCVInstruction.jalr;
+          default:
+            throw FormatException(
+              '[RISCV-INSTRUCTION ERROR] --> J-type Instruction of FUNCT3: (functString: $funct3string) does not exist. Check loaded instruction.',
+            );
+        }
+
+      case "0010111":
+        return RISCVInstruction.auipc;
+
+      case "0110111":
+        return RISCVInstruction.lui;
+
       case "0000000":
         return RISCVInstruction.nop;
 
@@ -207,10 +248,31 @@ class RISCVDecoder {
     final S =
         "${instrDiv[5].asUnsignedBitString(7)}${instrDiv[1].asUnsignedBitString(5)}";
 
+    final b0 = "0";
+    final b1 = instrDiv[1].asUnsignedBitString(5).substring(0, 4);
+    final b2 = instrDiv[5].asUnsignedBitString(7).substring(1, 7);
+    final b3 = instrDiv[1].asUnsignedBitString(5).substring(4);
+    final b4 = instrDiv[5].asUnsignedBitString(7).substring(0, 1);
+    final B = "$b4$b3$b2$b1$b0";
+
+    final U =
+        "${instrDiv[5].asUnsignedBitString(7)}${instrDiv[4].asUnsignedBitString(5)}${instrDiv[3].asUnsignedBitString(5)}${instrDiv[2].asUnsignedBitString(3)}";
+
+    final j0 = "0";
+    final j1 = I.substring(1, 11);
+    final j2 = I.substring(11, 12);
+    final j3 =
+        "${instrDiv[3].asUnsignedBitString(5)}${instrDiv[2].asUnsignedBitString(3)}";
+    final j4 = I.substring(0, 1);
+    final J = "$j4$j3$j2$j1$j0";
+
     return {
-      ImmSel.immTypeI: Data.fromUnsignedBitString(I, DataType.word),
-      ImmSel.immTypeXI: Data.fromUnsignedBitString(xI, DataType.word),
-      ImmSel.immTypeS: Data.fromUnsignedBitString(S, DataType.word),
+      ImmSel.immTypeI: Data.fromSignedBitString(I, DataType.word),
+      ImmSel.immTypeXI: Data.fromSignedBitString(xI, DataType.word),
+      ImmSel.immTypeS: Data.fromSignedBitString(S, DataType.word),
+      ImmSel.immTypeB: Data.fromSignedBitString(B, DataType.word),
+      ImmSel.immTypeU: Data.fromSignedBitString(U, DataType.word),
+      ImmSel.immTypeJ: Data.fromSignedBitString(J, DataType.word),
     };
   }
 }
@@ -251,6 +313,17 @@ enum RISCVInstruction {
   sh(opCodeType: RISCVOpCodeType.S),
   sw(opCodeType: RISCVOpCodeType.S),
 
+  beq(opCodeType: RISCVOpCodeType.B),
+  bge(opCodeType: RISCVOpCodeType.B),
+  bgeu(opCodeType: RISCVOpCodeType.B),
+  blt(opCodeType: RISCVOpCodeType.B),
+  bltu(opCodeType: RISCVOpCodeType.B),
+  bne(opCodeType: RISCVOpCodeType.B),
+
+  jal(opCodeType: RISCVOpCodeType.J),
+  jalr(opCodeType: RISCVOpCodeType.I),
+
+  auipc(opCodeType: RISCVOpCodeType.U),
   lui(opCodeType: RISCVOpCodeType.U);
 
   const RISCVInstruction({required this.opCodeType});

@@ -98,6 +98,12 @@ class Data {
     return Data(signedInt: signedBitsAsInt, dataType: dataType);
   }
 
+  factory Data.fromSignedBitString(String bitString, DataType dataType) {
+    final int unsignedBitsAsInt = int.parse(bitString, radix: 2);
+    final int signedBitsAsInt = unsignedBitsAsInt.toSigned(bitString.length);
+    return Data(signedInt: signedBitsAsInt, dataType: dataType);
+  }
+
   factory Data.bit(int signedInt) {
     return Data(signedInt: signedInt, dataType: DataType.bit);
   }

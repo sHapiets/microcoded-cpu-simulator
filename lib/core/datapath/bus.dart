@@ -1,9 +1,12 @@
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
+import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 
 class Bus extends Component {
   Bus._();
   static final singleton = Bus._();
+
+  final processorStateManager = ProcessorStateManager.singleton;
 
   Data busData = Data.wordZero();
   bool busOccupied = false;
@@ -18,11 +21,13 @@ class Bus extends Component {
   void setBuffer(Buffer buffer, bool enableBool) {
     if (enableBool == false) {
       buffers[buffer] = false;
+      processorStateManager.updateBufferState(buffer, enableBool);
       return;
     }
 
     if (enableBool == true && busOccupied == false) {
       buffers[buffer] = true;
+      processorStateManager.updateBufferState(buffer, enableBool);
       busOccupied = true;
     } else {
       throw FormatException(
@@ -44,6 +49,7 @@ class Bus extends Component {
   void passData({required Data newData, required Buffer componentBuffer}) {
     if (buffers[componentBuffer] == true) {
       busData = newData;
+      processorStateManager.updateBusDataState(newData);
     }
   }
 

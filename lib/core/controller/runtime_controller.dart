@@ -9,10 +9,11 @@ import 'package:microcoded_cpu_coe197/core/datapath/memory/memory.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/multiplexers/immediate_multiplexer.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/registers/instruction_register.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/registers/register_file.dart';
+import 'package:microcoded_cpu_coe197/core/state_manager/runtime_state_manager.dart';
 
-class TempController {
-  TempController._();
-  static final singleton = TempController._();
+class RuntimeController {
+  RuntimeController._();
+  static final singleton = RuntimeController._();
 
   final instructionController = InstructionController.singleton;
   final microcodeController = MicrocodeController.singleton;
@@ -27,8 +28,24 @@ class TempController {
   final memory = Memory.singleton;
   final bus = Bus.singleton;
 
-  void runInstructions(int counter) {
-    microcodeController.update();
+  final runtimeStateManager = RuntimeStateManager.singleton;
+
+  void updateState() {
+    final nextMicrocodeLine = microcodeController.microcodePC.unsignedInt;
+    final nextBranchType = microcodeController.branchType;
+    final newInstruction = instructionController.instruction;
+    runtimeStateManager.update(
+      runtimeCycles,
+      nextMicrocodeLine,
+      nextBranchType,
+      newInstruction,
+    );
+  }
+
+  int runtimeCycles = 0;
+
+  void runCycle() {
+    runtimeCycles++;
     instructionController.readComponents();
     bus.resetAllBuffers();
     signalController.updateComponents();
@@ -50,6 +67,8 @@ class TempController {
     instructionRegister.readBus();
     immediateMultiplexer.readBus();
 
+    microcodeController.update();
+    updateState();
     /* 
     debugPrint(
       "instr: ${instructionController.instruction.instrWord.asBitString(32)}",

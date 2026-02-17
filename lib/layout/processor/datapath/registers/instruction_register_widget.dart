@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/registers/instruction_register.dart';
 import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 import 'package:microcoded_cpu_coe197/layout/processor/datapath/_component/component_painter.dart';
 
-class AWidget extends StatefulWidget {
-  const AWidget({super.key});
+class InstructionRegisterWidget extends StatefulWidget {
+  const InstructionRegisterWidget({super.key});
 
   @override
-  State<AWidget> createState() => _AWidgetState();
+  State<InstructionRegisterWidget> createState() =>
+      _InstructionRegisterWidgetState();
 }
 
-class _AWidgetState extends State<AWidget> {
-  final a = A.singleton;
+class _InstructionRegisterWidgetState extends State<InstructionRegisterWidget> {
   final processorStateManager = ProcessorStateManager.singleton;
+  final instructionRegister = InstructionRegister.singleton;
 
   final double widgetHeight = 50.0;
-  final double widgetWidth = 150.0;
+  final double widgetWidth = 180.0;
 
-  final Size paintSize = Size(150, 35);
+  final Size paintSize = Size(180, 35);
   final double rotation45 = 90 * 3.14 / 180;
 
-  late final Widget aDataText;
+  late final Widget instrRegDataText;
 
   @override
   void initState() {
-    final initAData = a.data;
-    processorStateManager.updateADataState(initAData);
-
-    aDataText = ValueListenableBuilder(
-      valueListenable: processorStateManager.aDataState,
+    instrRegDataText = ValueListenableBuilder(
+      valueListenable: processorStateManager.instrRegState,
       builder: (context, value, child) {
         final text = "0x${value.asUnsignedHexString(8)}";
 
@@ -54,7 +52,7 @@ class _AWidgetState extends State<AWidget> {
           child: Text(
             text,
             key: ValueKey(text),
-            style: TextStyle(fontSize: 15, fontFamily: "Roboto-Mono"),
+            style: const TextStyle(fontSize: 15, fontFamily: "Roboto-Mono"),
           ),
         );
       },
@@ -95,7 +93,7 @@ class _AWidgetState extends State<AWidget> {
                   children: [
                     Icon(Icons.adjust_rounded),
                     Text(
-                      "A",
+                      "instruction register",
                       style: TextStyle(fontSize: 15, fontFamily: "Nunito"),
                     ),
                   ],
@@ -107,17 +105,15 @@ class _AWidgetState extends State<AWidget> {
               alignment: AlignmentGeometry.center,
               child: Transform.translate(
                 offset: Offset(0, 0),
-                child: aDataText,
+                child: instrRegDataText,
               ),
             ),
-
-            /// LOADENABLEBOOL ICON
             Align(
               alignment: AlignmentGeometry.centerLeft,
               child: Transform.translate(
                 offset: Offset(-50, 0),
                 child: ValueListenableBuilder(
-                  valueListenable: processorStateManager.aLoadState,
+                  valueListenable: processorStateManager.instrRegLoadState,
                   builder: (context, value, child) {
                     return Icon(
                       (value)

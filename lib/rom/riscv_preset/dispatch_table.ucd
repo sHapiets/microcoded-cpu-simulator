@@ -26,3 +26,13 @@ lw>>59
 sb>>5d
 sh>>62
 sw>>67
+beq>>70
+bge>>74
+bgeu>>78
+blt>>7c
+bltu>>80
+bne>>84
+jal>>88
+jalr>>8c
+auipc>>90
+lui>>95

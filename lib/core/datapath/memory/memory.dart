@@ -1,27 +1,29 @@
 import 'package:microcoded_cpu_coe197/core/datapath/bus.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/component.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
+import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 
 class Memory extends Component {
   Memory._();
   static final singleton = Memory._();
 
   final bus = Bus.singleton;
+  final processorStateManager = ProcessorStateManager.singleton;
 
   Data memoryAddress = Data.wordZero();
   int get memoryWordAddress => memoryAddress.asUnsignedInt() >> 2;
   int get memoryByteAddress => memoryAddress.asUnsignedInt() & 0x3;
 
   final int instrWordAddressBegin = 0x00;
-  final int instrWordAddressLimit = 0x05;
-  final int dynamicWordAddressBegin = 0x06;
-  final int dynamicWordAddressLimit = 0x0a;
-  bool get memAddressOnInstrSpace =>
-      (memoryWordAddress >= instrWordAddressBegin &&
-      memoryWordAddress <= instrWordAddressLimit);
+  final int instrWordAddressLimit = 0x2f;
+  final int dynamicWordAddressBegin = 0x30;
+  final int dynamicWordAddressLimit = 0x4f;
+  bool memAddressOnInstrSpace(Data wordAddress) =>
+      (wordAddress.asUnsignedInt() >= instrWordAddressBegin &&
+      wordAddress.asUnsignedInt() <= instrWordAddressLimit);
 
   final List<List<Data>> byteMemory = List.generate(
-    0x0a,
+    0x1ff,
     (_) => List.generate(4, (_) => Data.byteZero()),
   );
 
@@ -40,6 +42,7 @@ class Memory extends Component {
   void setMemAddress(Data newAddress) {
     final newAddAsWord = newAddress.asType(DataType.word);
     memoryAddress = newAddAsWord;
+    processorStateManager.updateMemAddState(newAddress);
   }
 
   void setAddressLoadEnable(bool enableBool) {
@@ -55,22 +58,16 @@ class Memory extends Component {
     int getMemoryByteAddress = storeAddress.asUnsignedInt() & 0x3;
 
     byteMemory[getMemoryWordAddress][getMemoryByteAddress] = newByte;
+    processorStateManager.updateMemoryState(newByte, storeAddress);
   }
 
   void storeByte(Data newByte) {
-    bool addressNotDivBy4 = (memoryAddress.asUnsignedInt() & 0x3) != 0;
-    if (addressNotDivBy4) {
-      throw FormatException(
-        "[MEM. ADDRESS ERROR] --> Memory attempts to store a Word, but the memory address does not point to a valid Word address: (0x${memoryAddress.asUnsignedHexString(8)}).",
-      );
-    }
-
     setByte(newByte, memoryAddress);
   }
 
   void storeHalf(Data newHalf) {
-    bool addressNotDivBy4 = (memoryAddress.asUnsignedInt() & 0x3) != 0;
-    if (addressNotDivBy4) {
+    bool addressNotDivBy2 = (memoryAddress.asUnsignedInt() & 0x1) != 0;
+    if (addressNotDivBy2) {
       throw FormatException(
         "[MEM. ADDRESS ERROR] --> Memory attempts to store a Word, but the memory address does not point to a valid Word address: (0x${memoryAddress.asUnsignedHexString(8)}).",
       );
@@ -158,20 +155,25 @@ class Memory extends Component {
   }
 
   void presetInstructionLoad() {
-    byteMemory[0][0] = Data.fromUnsignedHexString('83', DataType.byte);
-    byteMemory[0][1] = Data.fromUnsignedHexString('21', DataType.byte);
-    byteMemory[0][2] = Data.fromUnsignedHexString('80', DataType.byte);
-    byteMemory[0][3] = Data.fromUnsignedHexString('01', DataType.byte);
+    setByte(Data.fromUnsignedHexString('23', DataType.byte), Data.word(0));
+    setByte(Data.fromUnsignedHexString('00', DataType.byte), Data.word(1));
+    setByte(Data.fromUnsignedHexString('10', DataType.byte), Data.word(2));
+    setByte(Data.fromUnsignedHexString('0c', DataType.byte), Data.word(3));
+    /* 
+    byteMemory[1][0] = Data.fromUnsignedHexString('E3', DataType.byte);
+    byteMemory[1][1] = Data.fromUnsignedHexString('DE', DataType.byte);
+    byteMemory[1][2] = Data.fromUnsignedHexString('80', DataType.byte);
+    byteMemory[1][3] = Data.fromUnsignedHexString('FE', DataType.byte);
 
-    byteMemory[6][0] = Data.fromUnsignedHexString('FF', DataType.byte);
-    byteMemory[6][1] = Data.fromUnsignedHexString('80', DataType.byte);
-    byteMemory[6][2] = Data.fromUnsignedHexString('00', DataType.byte);
-    byteMemory[6][3] = Data.fromUnsignedHexString('80', DataType.byte);
+    byteMemory[2][0] = Data.fromUnsignedHexString('93', DataType.byte);
+    byteMemory[2][1] = Data.fromUnsignedHexString('80', DataType.byte);
+    byteMemory[2][2] = Data.fromUnsignedHexString('30', DataType.byte);
+    byteMemory[2][3] = Data.fromUnsignedHexString('00', DataType.byte);
 
-    byteMemory[1][0] = Data.fromUnsignedHexString('23', DataType.byte);
-    byteMemory[1][1] = Data.fromUnsignedHexString('1e', DataType.byte);
-    byteMemory[1][2] = Data.fromUnsignedHexString('30', DataType.byte);
-    byteMemory[1][3] = Data.fromUnsignedHexString('00', DataType.byte);
+    byteMemory[3][0] = Data.fromUnsignedHexString('E3', DataType.byte);
+    byteMemory[3][1] = Data.fromUnsignedHexString('DA', DataType.byte);
+    byteMemory[3][2] = Data.fromUnsignedHexString('80', DataType.byte);
+    byteMemory[3][3] = Data.fromUnsignedHexString('FE', DataType.byte); */
 
     /* byteMemory[2][0] = Data.fromUnsignedHexString('23', DataType.byte);
     byteMemory[2][1] = Data.fromUnsignedHexString('2c', DataType.byte);
@@ -182,6 +184,7 @@ class Memory extends Component {
   @override
   void readBus() {
     super.readBus();
+    processorStateManager.updateMemAddLoadState(addressloadEnable);
     if (addressloadEnable == true) {
       final busData = bus.getData();
       setMemAddress(busData);

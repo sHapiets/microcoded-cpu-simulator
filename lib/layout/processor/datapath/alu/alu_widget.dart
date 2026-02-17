@@ -16,6 +16,7 @@ class _ALUWidgetState extends State<ALUWidget> {
   final double widgetWidth = 100.0;
 
   final Size paintSize = Size(80, 160);
+  final double rotation45 = 90 * 3.14 / 180;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,23 @@ class _ALUWidgetState extends State<ALUWidget> {
               child: CustomPaint(
                 size: paintSize,
                 painter: ComponentPainter(componentShape: ComponentShape.alu),
+              ),
+            ),
+
+            Align(
+              alignment: AlignmentGeometry.topLeft,
+              child: Transform.translate(
+                offset: Offset(20, 0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.settings),
+                    Text(
+                      "ALU",
+                      style: TextStyle(fontSize: 15, fontFamily: "Nunito"),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

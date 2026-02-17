@@ -1,9 +1,12 @@
 import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 import 'package:microcoded_cpu_coe197/core/foundation/register_address.dart';
+import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 
 class RegSelMultiplexer {
   RegSelMultiplexer._();
   static final singleton = RegSelMultiplexer._();
+
+  final processorStateManager = ProcessorStateManager.singleton;
 
   RegSel regSel = RegSel.pc;
   Map<RegSel, RegisterAddress> addressMapping = {
@@ -15,6 +18,7 @@ class RegSelMultiplexer {
 
   void setRegSel(RegSel newRegSel) {
     regSel = newRegSel;
+    processorStateManager.updateRegSelState(newRegSel);
   }
 
   RegisterAddress getRegisterAddress() {

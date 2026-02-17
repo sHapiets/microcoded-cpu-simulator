@@ -66,6 +66,14 @@ flutter:
       - lib/rom/riscv_preset/microcoded_rom.ucr
       - lib/rom/riscv_preset/dispatch_table.ucd
 
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: lib/layout/_assets/fontstyles/Nunito-Regular.ttf
+    - family: Roboto-Mono
+      fonts:
+        - asset: lib/layout/_assets/fontstyles/RobotoMono-Regular.ttf
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

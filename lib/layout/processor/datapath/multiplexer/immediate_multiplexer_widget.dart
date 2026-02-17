@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
 import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 import 'package:microcoded_cpu_coe197/layout/processor/datapath/_component/component_painter.dart';
 
-class AWidget extends StatefulWidget {
-  const AWidget({super.key});
+class ImmediateMultiplexerWidget extends StatefulWidget {
+  const ImmediateMultiplexerWidget({super.key});
 
   @override
-  State<AWidget> createState() => _AWidgetState();
+  State<ImmediateMultiplexerWidget> createState() =>
+      _ImmediateMultiplexerWidgetState();
 }
 
-class _AWidgetState extends State<AWidget> {
-  final a = A.singleton;
+class _ImmediateMultiplexerWidgetState
+    extends State<ImmediateMultiplexerWidget> {
   final processorStateManager = ProcessorStateManager.singleton;
 
-  final double widgetHeight = 50.0;
-  final double widgetWidth = 150.0;
+  final double widgetHeight = 100;
+  final double widgetWidth = 200;
 
-  final Size paintSize = Size(150, 35);
+  final Size paintSize = Size(160, 50);
   final double rotation45 = 90 * 3.14 / 180;
 
-  late final Widget aDataText;
+  late final Widget immSelText;
 
   @override
   void initState() {
-    final initAData = a.data;
-    processorStateManager.updateADataState(initAData);
-
-    aDataText = ValueListenableBuilder(
-      valueListenable: processorStateManager.aDataState,
+    immSelText = ValueListenableBuilder(
+      valueListenable: processorStateManager.immSelState,
       builder: (context, value, child) {
-        final text = "0x${value.asUnsignedHexString(8)}";
+        final text = value.name;
 
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 250),
@@ -54,18 +51,12 @@ class _AWidgetState extends State<AWidget> {
           child: Text(
             text,
             key: ValueKey(text),
-            style: TextStyle(fontSize: 15, fontFamily: "Roboto-Mono"),
+            style: TextStyle(fontSize: 15, fontFamily: "Nunito"),
           ),
         );
       },
     );
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -81,24 +72,7 @@ class _AWidgetState extends State<AWidget> {
               child: CustomPaint(
                 size: paintSize,
                 painter: ComponentPainter(
-                  componentShape: ComponentShape.register,
-                ),
-              ),
-            ),
-
-            Align(
-              alignment: AlignmentGeometry.centerLeft,
-              child: Transform.translate(
-                offset: Offset(0, -30),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(Icons.adjust_rounded),
-                    Text(
-                      "A",
-                      style: TextStyle(fontSize: 15, fontFamily: "Nunito"),
-                    ),
-                  ],
+                  componentShape: ComponentShape.multiplexer,
                 ),
               ),
             ),
@@ -107,26 +81,23 @@ class _AWidgetState extends State<AWidget> {
               alignment: AlignmentGeometry.center,
               child: Transform.translate(
                 offset: Offset(0, 0),
-                child: aDataText,
+                child: immSelText,
               ),
             ),
 
-            /// LOADENABLEBOOL ICON
             Align(
               alignment: AlignmentGeometry.centerLeft,
               child: Transform.translate(
-                offset: Offset(-50, 0),
-                child: ValueListenableBuilder(
-                  valueListenable: processorStateManager.aLoadState,
-                  builder: (context, value, child) {
-                    return Icon(
-                      (value)
-                          ? Icons.toggle_on_rounded
-                          : Icons.toggle_off_outlined,
-                      size: 35,
-                      color: (value) ? Colors.green : Colors.black,
-                    );
-                  },
+                offset: Offset(10, -40),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.keyboard_option_key_rounded),
+                    Text(
+                      "immediate multiplexer",
+                      style: TextStyle(fontSize: 15, fontFamily: "Nunito"),
+                    ),
+                  ],
                 ),
               ),
             ),

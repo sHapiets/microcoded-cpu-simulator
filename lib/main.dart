@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:microcoded_cpu_coe197/core/controller/microcode_controller.dart';
-import 'package:microcoded_cpu_coe197/core/controller/temp_controller.dart';
+import 'package:microcoded_cpu_coe197/core/controller/runtime_controller.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/alu.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/b.dart';
@@ -30,8 +30,10 @@ class _GlobalAppState extends State<GlobalApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Microcoded CPU Simulator',
-      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
-      home: TestDisplay(title: ''),
+      theme: ThemeData(
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      ),
+      home: MainPage(),
     );
   }
 }
@@ -78,7 +80,7 @@ class _TestDisplayState extends State<TestDisplay> {
 
   void _incrementCounter() {
     setState(() {
-      TempController.singleton.runInstructions(counter);
+      RuntimeController.singleton.runCycle();
       counter++;
     });
   }

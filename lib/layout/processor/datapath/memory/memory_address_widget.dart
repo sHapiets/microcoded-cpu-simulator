@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/memory/memory.dart';
 import 'package:microcoded_cpu_coe197/core/state_manager/processor_state_manager.dart';
 import 'package:microcoded_cpu_coe197/layout/processor/datapath/_component/component_painter.dart';
 
-class AWidget extends StatefulWidget {
-  const AWidget({super.key});
+class MemoryAddressWidget extends StatefulWidget {
+  const MemoryAddressWidget({super.key});
 
   @override
-  State<AWidget> createState() => _AWidgetState();
+  State<MemoryAddressWidget> createState() => _MemoryAddressWidgetState();
 }
 
-class _AWidgetState extends State<AWidget> {
-  final a = A.singleton;
+class _MemoryAddressWidgetState extends State<MemoryAddressWidget> {
+  final memory = Memory.singleton;
   final processorStateManager = ProcessorStateManager.singleton;
 
   final double widgetHeight = 50.0;
-  final double widgetWidth = 150.0;
+  final double widgetWidth = 180.0;
 
-  final Size paintSize = Size(150, 35);
+  final Size paintSize = Size(180, 35);
   final double rotation45 = 90 * 3.14 / 180;
 
-  late final Widget aDataText;
+  void updateWidget() => setState(() {});
+
+  late final Widget memAddressText;
 
   @override
   void initState() {
-    final initAData = a.data;
-    processorStateManager.updateADataState(initAData);
-
-    aDataText = ValueListenableBuilder(
-      valueListenable: processorStateManager.aDataState,
+    memAddressText = ValueListenableBuilder(
+      valueListenable: processorStateManager.memAddState,
       builder: (context, value, child) {
         final text = "0x${value.asUnsignedHexString(8)}";
 
@@ -54,7 +53,7 @@ class _AWidgetState extends State<AWidget> {
           child: Text(
             text,
             key: ValueKey(text),
-            style: TextStyle(fontSize: 15, fontFamily: "Roboto-Mono"),
+            style: const TextStyle(fontSize: 15, fontFamily: "Roboto-Mono"),
           ),
         );
       },
@@ -95,7 +94,7 @@ class _AWidgetState extends State<AWidget> {
                   children: [
                     Icon(Icons.adjust_rounded),
                     Text(
-                      "A",
+                      "memory address",
                       style: TextStyle(fontSize: 15, fontFamily: "Nunito"),
                     ),
                   ],
@@ -107,7 +106,7 @@ class _AWidgetState extends State<AWidget> {
               alignment: AlignmentGeometry.center,
               child: Transform.translate(
                 offset: Offset(0, 0),
-                child: aDataText,
+                child: memAddressText,
               ),
             ),
 
@@ -117,7 +116,7 @@ class _AWidgetState extends State<AWidget> {
               child: Transform.translate(
                 offset: Offset(-50, 0),
                 child: ValueListenableBuilder(
-                  valueListenable: processorStateManager.aLoadState,
+                  valueListenable: processorStateManager.memAddLoadState,
                   builder: (context, value, child) {
                     return Icon(
                       (value)
