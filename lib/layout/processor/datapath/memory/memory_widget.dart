@@ -271,6 +271,26 @@ class _MemoryWidgetState extends State<MemoryWidget> {
                 child: switchMemoryDisplayButton,
               ),
             ),
+
+            /// LOADENABLEBOOL ICON
+            Align(
+              alignment: AlignmentGeometry.topRight,
+              child: Transform.translate(
+                offset: Offset(-40, -25),
+                child: ValueListenableBuilder(
+                  valueListenable: processorStateManager.memoryWriteEnableState,
+                  builder: (context, value, child) {
+                    return Icon(
+                      (value)
+                          ? Icons.toggle_on_rounded
+                          : Icons.toggle_off_outlined,
+                      size: 35,
+                      color: (value) ? Colors.green : Colors.black,
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),

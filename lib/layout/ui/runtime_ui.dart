@@ -48,7 +48,7 @@ class _RuntimeUIState extends State<RuntimeUI> {
     onPressed: () {
       RuntimeController.singleton.runInstruction();
     },
-    icon: Icon(Icons.fast_forward_rounded, size: 30, color: Colors.white),
+    icon: Icon(Icons.skip_next, size: 15, color: Colors.white),
   );
 
   final uploadInstruction = Container(
@@ -303,6 +303,13 @@ class _RuntimeUIState extends State<RuntimeUI> {
             Center(
               child: Transform.translate(
                 offset: Offset(150, 0),
+                child: runCycleButton,
+              ),
+            ),
+
+            Center(
+              child: Transform.translate(
+                offset: Offset(200, 20),
                 child: runInstructionButton,
               ),
             ),

@@ -35,6 +35,8 @@ class ProcessorStateManager {
   ValueNotifier<bool> bLoadState = ValueNotifier(false);
   ValueNotifier<bool> memAddLoadState = ValueNotifier(false);
   ValueNotifier<bool> instrRegLoadState = ValueNotifier(false);
+  ValueNotifier<bool> regWriteEnableState = ValueNotifier(false);
+  ValueNotifier<bool> memoryWriteEnableState = ValueNotifier(false);
 
   ValueNotifier<RegSel> regSelState = ValueNotifier(RegSel.rd);
   ValueNotifier<ImmSel> immSelState = ValueNotifier(ImmSel.immTypeB);
@@ -97,6 +99,14 @@ class ProcessorStateManager {
 
   void updateInstrRegLoadState(bool enableBool) {
     instrRegLoadState.value = enableBool;
+  }
+
+  void updateRegWriteEnableState(bool enableBool) {
+    regWriteEnableState.value = enableBool;
+  }
+
+  void updateMemoryWriteEnableState(bool enableBool) {
+    memoryWriteEnableState.value = enableBool;
   }
 
   void updateRegSelState(RegSel newRegSel) {

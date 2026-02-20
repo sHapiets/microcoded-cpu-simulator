@@ -168,6 +168,7 @@ class Memory extends Component {
   void readBus() {
     super.readBus();
     processorStateManager.updateMemAddLoadState(addressloadEnable);
+    processorStateManager.updateMemoryWriteEnableState(writeEnable);
     if (addressloadEnable == true) {
       final busData = bus.getData();
       setMemAddress(busData);

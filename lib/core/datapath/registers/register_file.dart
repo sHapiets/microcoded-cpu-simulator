@@ -59,6 +59,7 @@ class RegisterFile extends Component {
 
   @override
   void readBus() {
+    processorStateManager.updateRegWriteEnableState(writeEnable);
     if (writeEnable) {
       writeRegister();
     }
