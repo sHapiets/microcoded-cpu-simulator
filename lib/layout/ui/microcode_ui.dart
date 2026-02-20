@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:microcoded_cpu_coe197/core/controller/microcode_controller.dart';
 
 class MicrocodeUI extends StatefulWidget {
   const MicrocodeUI({super.key});
@@ -9,7 +10,9 @@ class MicrocodeUI extends StatefulWidget {
 
 class _MicrocodeUIState extends State<MicrocodeUI> {
   final uiHeight = 500.0;
-  final uiWidth = 300.0;
+  final uiWidth = 800.0;
+
+  final microcodeController = MicrocodeController.singleton;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,7 @@ class _MicrocodeUIState extends State<MicrocodeUI> {
       width: uiWidth,
       height: uiHeight,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(183, 6, 45, 104),
+        color: const Color.fromARGB(183, 255, 255, 255),
         border: Border.all(
           color: const Color.fromARGB(40, 0, 0, 0),
           width: 2.0,
@@ -29,6 +32,18 @@ class _MicrocodeUIState extends State<MicrocodeUI> {
             offset: Offset(10, 10),
           ),
         ],
+      ),
+      child: ListView(
+        children: microcodeController.microcodeROM.map((microcode) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 3,
+            children: microcode.entries.map((signal) {
+              return Text(signal.value.asUnsignedHexString(2));
+            }).toList(),
+          );
+        }).toList(),
       ),
     );
   }

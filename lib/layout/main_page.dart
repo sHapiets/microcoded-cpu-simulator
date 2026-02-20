@@ -18,7 +18,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    memory.presetInstructionLoad();
     microcodeController.initializePreset();
     /* 
     Data data = Data.halfWord(-128);

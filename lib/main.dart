@@ -58,7 +58,6 @@ class _TestDisplayState extends State<TestDisplay> {
 
   @override
   void initState() {
-    Memory.singleton.presetInstructionLoad();
     microcodeController.initializePreset();
     /* 
     Data data = Data.halfWord(-128);

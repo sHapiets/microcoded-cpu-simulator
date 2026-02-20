@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/alu_operations.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/a.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/alu/operands/b.dart';
@@ -55,7 +56,7 @@ class ALU extends Component {
         result = (aUnsigned < bUnsigned) ? Data.bit(1) : Data.bit(0);
       case ALUOperation.sra:
         final aSigned = a.data.asSignedInt();
-        final shiftAmount = b.data.asUnsignedInt().clamp(0, 31);
+        final shiftAmount = b.data.asUnsignedInt() & 0x1F;
         result = Data(
           signedInt: (aSigned >> shiftAmount).toSigned(
             a.data.dataType.bitLength,
@@ -64,7 +65,7 @@ class ALU extends Component {
         );
       case ALUOperation.srl:
         final aUnsigned = a.data.asUnsignedInt();
-        final shiftAmount = b.data.asUnsignedInt().clamp(0, 31);
+        final shiftAmount = b.data.asUnsignedInt() & 0x1F;
         result = Data(
           signedInt: (aUnsigned >> shiftAmount).toSigned(
             a.data.dataType.bitLength,
@@ -73,7 +74,7 @@ class ALU extends Component {
         );
       case ALUOperation.sll:
         final aUnsigned = a.data.asUnsignedInt();
-        final shiftAmount = b.data.asUnsignedInt().clamp(0, 31);
+        final shiftAmount = b.data.asUnsignedInt() & 0x1F;
         result = Data(
           signedInt: (aUnsigned << shiftAmount).toSigned(
             a.data.dataType.bitLength,

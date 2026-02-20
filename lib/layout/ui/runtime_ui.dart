@@ -1,6 +1,10 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:microcoded_cpu_coe197/core/controller/runtime_controller.dart';
+import 'package:microcoded_cpu_coe197/core/datapath/memory/memory.dart';
+import 'package:microcoded_cpu_coe197/core/foundation/data.dart';
 import 'package:microcoded_cpu_coe197/core/state_manager/runtime_state_manager.dart';
+import 'package:microcoded_cpu_coe197/layout/ui/microcode_ui.dart';
 
 class RuntimeUI extends StatefulWidget {
   const RuntimeUI({super.key});
@@ -12,6 +16,7 @@ class RuntimeUI extends StatefulWidget {
 class _RuntimeUIState extends State<RuntimeUI> {
   final runtimeController = RuntimeController.singleton;
   final runtimeStateManager = RuntimeStateManager.singleton;
+  final memory = Memory.singleton;
 
   final double uiWidth = 800;
   final double uiHeight = 200;
@@ -37,6 +42,75 @@ class _RuntimeUIState extends State<RuntimeUI> {
       RuntimeController.singleton.runCycle();
     },
     icon: Icon(Icons.play_circle_fill_rounded, size: 30, color: Colors.white),
+  );
+
+  final runInstructionButton = IconButton(
+    onPressed: () {
+      RuntimeController.singleton.runInstruction();
+    },
+    icon: Icon(Icons.fast_forward_rounded, size: 30, color: Colors.white),
+  );
+
+  final uploadInstruction = Container(
+    width: 40,
+    height: 40,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: const Color.fromARGB(194, 46, 91, 128),
+      boxShadow: [BoxShadow(offset: Offset(3, 3), color: Colors.black12)],
+    ),
+    child: IconButton(
+      onPressed: () async {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          withData: true,
+          dialogTitle: "Open Instruction Sequence File (.isq)",
+        );
+        if (result == null) return;
+        if (result.files.first.extension != "isq") return;
+
+        final bytes = result.files.first.bytes!;
+        final content = String.fromCharCodes(bytes);
+
+        final lines = content.split('\n');
+        int lineCounter = 0;
+
+        for (var line in lines) {
+          line = line.trim();
+          if (line.isEmpty) continue;
+
+          final instrWord = Data.fromUnsignedBitString(line, DataType.word);
+          final instrAddress = Data.word(lineCounter * 4);
+          Memory.singleton.storeInstruction(instrWord, instrAddress);
+
+          lineCounter++;
+        }
+      },
+      icon: Icon(
+        Icons.read_more_rounded,
+        size: 25,
+        color: const Color.fromARGB(255, 255, 255, 255),
+      ),
+    ),
+  );
+
+  Widget viewMicrocodeROMButton(BuildContext context) => Container(
+    width: 40,
+    height: 40,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: const Color.fromARGB(194, 46, 91, 128),
+      boxShadow: [BoxShadow(offset: Offset(3, 3), color: Colors.black12)],
+    ),
+    child: IconButton(
+      onPressed: () {
+        showDialog(context: context, builder: (context) => MicrocodeUI());
+      },
+      icon: Icon(
+        Icons.read_more_rounded,
+        size: 25,
+        color: const Color.fromARGB(255, 255, 255, 255),
+      ),
+    ),
   );
 
   late final Widget uiInstructionTypeText;
@@ -229,9 +303,17 @@ class _RuntimeUIState extends State<RuntimeUI> {
             Center(
               child: Transform.translate(
                 offset: Offset(150, 0),
-                child: runCycleButton,
+                child: runInstructionButton,
               ),
             ),
+
+            Center(
+              child: Transform.translate(
+                offset: Offset(0, 65),
+                child: uploadInstruction,
+              ),
+            ),
+
             Center(
               child: Transform.translate(
                 offset: Offset(-0, -30),

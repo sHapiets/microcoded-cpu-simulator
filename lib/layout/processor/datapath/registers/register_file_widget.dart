@@ -165,7 +165,7 @@ class _RegisterFileWidgetState extends State<RegisterFileWidget> {
               alignment: AlignmentGeometry.topCenter,
               child: Transform.translate(
                 offset: Offset(0, 70),
-                child: SizedBox(height: 200, child: registerTable),
+                child: SizedBox(height: 210, child: registerTable),
               ),
             ),
           ],

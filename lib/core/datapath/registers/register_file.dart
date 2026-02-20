@@ -16,14 +16,14 @@ class RegisterFile extends Component {
   Map<RegisterAddress, Data> registers = {
     RegisterAddress.pc: Data.wordZero(),
     RegisterAddress.x0: Data.wordZero(),
-    RegisterAddress.x1: Data.word(4),
-    RegisterAddress.x2: Data.word(0xF0F0F0F),
+    RegisterAddress.x1: Data.wordZero(),
+    RegisterAddress.x2: Data.wordZero(),
     RegisterAddress.x3: Data.wordZero(),
-    RegisterAddress.x4: Data.word(4),
+    RegisterAddress.x4: Data.wordZero(),
     RegisterAddress.x5: Data.wordZero(),
     RegisterAddress.x6: Data.wordZero(),
-    RegisterAddress.x7: Data.word(-1),
-    RegisterAddress.x8: Data.word(10),
+    RegisterAddress.x7: Data.wordZero(),
+    RegisterAddress.x8: Data.wordZero(),
   };
 
   bool writeEnable = false;

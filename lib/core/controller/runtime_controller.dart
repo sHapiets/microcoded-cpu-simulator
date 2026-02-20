@@ -77,4 +77,11 @@ class RuntimeController {
     debugPrint("ldIR: ${instructionRegister.loadEnable}"); */
     //debugPrint("${memory.memoryAddress.asBitString(32)}");
   }
+
+  void runInstruction() {
+    runCycle();
+    while (microcodeController.microcodePC.unsignedInt != 0) {
+      runCycle();
+    }
+  }
 }
