@@ -1,4 +1,5 @@
-name: Flutter Web Deploy
+name: Deploy Flutter Web to GitHub Pages
+
 on:
   push:
     branches:
@@ -6,18 +7,33 @@ on:
 
 permissions:
   contents: write
-
+  pages: write
+  id-token: write
 
 jobs:
-  build:    
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-      - run: flutter build web --release --base-href /flutter_web/
-      - run: git config user.name github-actions
-      - run: git config user.email github-actions@github.com
-      - run: git --work-tree build/web add --all
-      - run: git commit -m "Automatic deployment by github-actions"
-      - run: git push origin HEAD:gh-pages --force
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Enable Web
+        run: flutter config --enable-web
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Web
+        run: flutter build web --release --base-href /microcoded-cpu-simulator/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/web
