@@ -214,6 +214,8 @@ class _MemoryWidgetState extends State<MemoryWidget> {
                 size: paintSize,
                 painter: ComponentPainter(
                   componentShape: ComponentShape.memory,
+                  borderColor: Theme.of(context).colorScheme.primary,
+                  fillColor: Theme.of(context).colorScheme.surface,
                 ),
               ),
             ),

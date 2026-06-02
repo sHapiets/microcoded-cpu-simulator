@@ -79,7 +79,11 @@ class _BusWidgetState extends State<BusWidget> {
             Center(
               child: CustomPaint(
                 size: paintSize,
-                painter: ComponentPainter(componentShape: ComponentShape.bus),
+                painter: ComponentPainter(
+                  componentShape: ComponentShape.bus,
+                  borderColor: Theme.of(context).colorScheme.primary,
+                  fillColor: Theme.of(context).colorScheme.surface,
+                ),
               ),
             ),
 

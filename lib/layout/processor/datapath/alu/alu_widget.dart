@@ -109,7 +109,11 @@ class _ALUWidgetState extends State<ALUWidget> {
             Center(
               child: CustomPaint(
                 size: paintSize,
-                painter: ComponentPainter(componentShape: ComponentShape.alu),
+                painter: ComponentPainter(
+                  componentShape: ComponentShape.alu,
+                  borderColor: Theme.of(context).colorScheme.primary,
+                  fillColor: Theme.of(context).colorScheme.surface,
+                ),
               ),
             ),
 

@@ -18,6 +18,8 @@ void main() {
   runApp(const GlobalApp());
 }
 
+final themeModeNotifier = ValueNotifier(ThemeMode.light);
+
 class GlobalApp extends StatefulWidget {
   const GlobalApp({super.key});
 
@@ -28,14 +30,65 @@ class GlobalApp extends StatefulWidget {
 class _GlobalAppState extends State<GlobalApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Microcoded CPU Simulator',
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
+    return ValueListenableBuilder(
+      valueListenable: themeModeNotifier,
+      builder: (context, mode, child) => MaterialApp(
+        title: 'Microcoded CPU Simulator',
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: mode,
+        home: MainPage(),
       ),
-      home: MainPage(),
     );
   }
+}
+
+class AppTheme {
+  static const processorPrimary = Color(0xFF2E6F80);
+
+  // LIGHT
+  static final ThemeData lightTheme = ThemeData(
+    brightness: Brightness.light,
+
+    scaffoldBackgroundColor: const Color(0xFFF7F9FB),
+
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: processorPrimary,
+      brightness: Brightness.light,
+    ),
+
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFFF7F9FB),
+      elevation: 0,
+    ),
+
+    textTheme: ThemeData.light().textTheme.apply(
+      bodyColor: const Color(0xFF1E2933),
+      displayColor: const Color(0xFF1E2933),
+    ),
+  );
+
+  // DARK
+  static final ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
+
+    scaffoldBackgroundColor: const Color(0xFF111418),
+
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: processorPrimary,
+      brightness: Brightness.dark,
+    ),
+
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF111418),
+      elevation: 0,
+    ),
+
+    textTheme: ThemeData.dark().textTheme.apply(
+      bodyColor: const Color(0xFFE8EEF2),
+      displayColor: const Color(0xFFE8EEF2),
+    ),
+  );
 }
 
 class TestDisplay extends StatefulWidget {

@@ -73,6 +73,8 @@ class _ImmediateMultiplexerWidgetState
                 size: paintSize,
                 painter: ComponentPainter(
                   componentShape: ComponentShape.multiplexer,
+                  borderColor: Theme.of(context).colorScheme.primary,
+                  fillColor: Theme.of(context).colorScheme.surface,
                 ),
               ),
             ),

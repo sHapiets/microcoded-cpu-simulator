@@ -80,6 +80,8 @@ class _InstructionRegisterWidgetState extends State<InstructionRegisterWidget> {
                 size: paintSize,
                 painter: ComponentPainter(
                   componentShape: ComponentShape.register,
+                  borderColor: Theme.of(context).colorScheme.primary,
+                  fillColor: Theme.of(context).colorScheme.surface,
                 ),
               ),
             ),

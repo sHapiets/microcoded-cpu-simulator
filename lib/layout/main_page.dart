@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:microcoded_cpu_coe197/core/controller/microcode_controller.dart';
 import 'package:microcoded_cpu_coe197/core/datapath/memory/memory.dart';
 import 'package:microcoded_cpu_coe197/layout/processor/processor_widget.dart';
+import 'package:microcoded_cpu_coe197/layout/ui/appbar_ui.dart';
 import 'package:microcoded_cpu_coe197/layout/ui/microcode_ui.dart';
 import 'package:microcoded_cpu_coe197/layout/ui/runtime_ui.dart';
 
@@ -40,6 +41,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const AppbarUI(),
       body: Padding(
         padding: EdgeInsetsGeometry.all(10),
         child: Stack(

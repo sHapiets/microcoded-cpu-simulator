@@ -22,10 +22,10 @@ class _BuffersWidgetState extends State<BuffersWidget> {
   void updateWidget() => setState(() {});
 
   final bufferPosition = {
-    Buffer.immEn: Offset(-440, 0),
-    Buffer.regEn: Offset(-140, 0),
+    Buffer.immEn: Offset(-450, 0),
+    Buffer.regEn: Offset(-180, 0),
     Buffer.aluEn: Offset(420, 0),
-    Buffer.memEn: Offset(620, 0),
+    Buffer.memEn: Offset(560, 0),
   };
   final enableOffset = Offset(-40, 0);
 
@@ -47,6 +47,8 @@ class _BuffersWidgetState extends State<BuffersWidget> {
                   size: paintSize,
                   painter: ComponentPainter(
                     componentShape: ComponentShape.buffer,
+                    borderColor: Theme.of(context).colorScheme.primary,
+                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
                 ),
               ),
@@ -77,6 +79,8 @@ class _BuffersWidgetState extends State<BuffersWidget> {
                   size: paintSize,
                   painter: ComponentPainter(
                     componentShape: ComponentShape.buffer,
+                    borderColor: Theme.of(context).colorScheme.primary,
+                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
                 ),
               ),
@@ -108,6 +112,8 @@ class _BuffersWidgetState extends State<BuffersWidget> {
                   size: paintSize,
                   painter: ComponentPainter(
                     componentShape: ComponentShape.buffer,
+                    borderColor: Theme.of(context).colorScheme.primary,
+                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
                 ),
               ),
@@ -139,6 +145,8 @@ class _BuffersWidgetState extends State<BuffersWidget> {
                   size: paintSize,
                   painter: ComponentPainter(
                     componentShape: ComponentShape.buffer,
+                    borderColor: Theme.of(context).colorScheme.primary,
+                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
                 ),
               ),
