@@ -34,8 +34,11 @@ class AppbarUI extends StatelessWidget implements PreferredSizeWidget {
             height: 36,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF2E6F80), Color(0xFF3B8EA5)],
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary,
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -48,10 +51,10 @@ class AppbarUI extends StatelessWidget implements PreferredSizeWidget {
               ],
             ),
 
-            child: const Icon(
+            child: Icon(
               Icons.memory_rounded,
               size: 20,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
             ),
           ),
 
@@ -94,20 +97,35 @@ class AppbarUI extends StatelessWidget implements PreferredSizeWidget {
         _toolbarButton(Icons.skip_next_rounded, "Step"),
 
         _toolbarButton(Icons.restart_alt_rounded, "Reset"), */
-        _toolbarButton(Icons.light_mode_rounded, "Light Mode", () {
-          themeModeNotifier.value = ThemeMode.light;
-        }),
+        _toolbarButton(
+          Icons.light_mode_rounded,
+          Theme.of(context).colorScheme.primary,
+          "Light Mode",
+          () {
+            themeModeNotifier.value = ThemeMode.light;
+          },
+        ),
 
-        _toolbarButton(Icons.dark_mode_rounded, "Dark Mode", () {
-          themeModeNotifier.value = ThemeMode.dark;
-        }),
+        _toolbarButton(
+          Icons.dark_mode_rounded,
+          Theme.of(context).colorScheme.tertiary,
+          "Dark Mode",
+          () {
+            themeModeNotifier.value = ThemeMode.dark;
+          },
+        ),
 
         const SizedBox(width: 12),
       ],
     );
   }
 
-  Widget _toolbarButton(IconData icon, String tooltip, Function() onPressed) {
+  Widget _toolbarButton(
+    IconData icon,
+    Color color,
+    String tooltip,
+    Function() onPressed,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Tooltip(
@@ -125,7 +143,7 @@ class AppbarUI extends StatelessWidget implements PreferredSizeWidget {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: const Color(0x14000000)),
               ),
-              child: Icon(icon, size: 22, color: const Color(0xFF2E6F80)),
+              child: Icon(icon, size: 22, color: color),
             ),
           ),
         ),

@@ -27,7 +27,7 @@ class ComponentPainter extends CustomPainter {
       ..color = fillColor
       ..style = PaintingStyle.fill;
     final edgePaint = Paint()
-      ..color = const Color.fromARGB(194, 46, 111, 128)
+      ..color = borderColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;

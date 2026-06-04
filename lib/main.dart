@@ -18,7 +18,7 @@ void main() {
   runApp(const GlobalApp());
 }
 
-final themeModeNotifier = ValueNotifier(ThemeMode.light);
+final themeModeNotifier = ValueNotifier(ThemeMode.dark);
 
 class GlobalApp extends StatefulWidget {
   const GlobalApp({super.key});
